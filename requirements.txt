@@ -1,0 +1,27 @@
+# Salesforce Metadata AI Analyzer
+# Dependencies for the AI-powered Salesforce metadata analysis tool
+
+# Core (Required)
+python-dotenv>=1.0.0  # For loading environment variables from .env
+
+# LLM Providers (Optional - install based on your provider)
+
+# For OpenAI integration
+openai>=1.0.0
+
+# For Azure OpenAI integration (uses same package as OpenAI)
+# openai>=1.0.0
+
+# For Anthropic Claude integration
+anthropic>=0.18.0
+
+# For local LLM integration (Ollama)
+# ollama>=0.1.0
+
+# API Server (Optional - for REST API)
+# flask>=3.0.0         # For Flask API
+# fastapi>=0.109.0     # For FastAPI
+# uvicorn>=0.27.0      # For running FastAPI
+
+# Salesforce Integration (Optional)
+# simple-salesforce>=1.12.0  # For Salesforce REST API

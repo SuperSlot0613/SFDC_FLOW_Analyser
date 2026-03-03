@@ -1,0 +1,1221 @@
+{
+  "analyzed_at": "2026-03-03T19:22:37.802352",
+  "flows": [
+    {
+      "flow_name": "Create Property",
+      "developer_name": "Create_property",
+      "process_type": "Flow",
+      "trigger_type": null,
+      "trigger_object": null,
+      "trigger_conditions": [],
+      "decisions": [
+        {
+          "name": "If_content_document_found",
+          "label": "If Content Document found",
+          "rules": [
+            {
+              "name": "Content_Document_Link_found",
+              "label": "Content Document Found",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "get_main_content_document",
+                  "operator": "IsNull",
+                  "right": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "if_content_version_found",
+          "label": "If Content Version found",
+          "rules": [
+            {
+              "name": "picture_found",
+              "label": "Picture Found",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "get_main_content_version",
+                  "operator": "IsNull",
+                  "right": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "record_lookups": [
+        {
+          "name": "get_main_content_document",
+          "label": "Get Main Content Document",
+          "object": "ContentDocumentLink",
+          "filters": [
+            {
+              "field": "LinkedEntityId",
+              "operator": "EqualTo",
+              "value": "${create_property}"
+            }
+          ]
+        },
+        {
+          "name": "get_main_content_version",
+          "label": "Get Main Content Version",
+          "object": "ContentVersion",
+          "filters": [
+            {
+              "field": "ContentDocumentId",
+              "operator": "EqualTo",
+              "value": "${get_main_content_document.ContentDocumentId}"
+            },
+            {
+              "field": "IsLatest",
+              "operator": "EqualTo",
+              "value": true
+            }
+          ]
+        }
+      ],
+      "record_creates": [
+        {
+          "name": "create_property",
+          "label": "Create Property",
+          "object": "Property__c",
+          "fields": [
+            {
+              "field": "Address__c",
+              "value": "${property_address.street}"
+            },
+            {
+              "field": "Baths__c",
+              "value": "${number_of_baths}"
+            },
+            {
+              "field": "Beds__c",
+              "value": "${number_of_beds}"
+            },
+            {
+              "field": "Broker__c",
+              "value": "${property_broker.recordId}"
+            },
+            {
+              "field": "City__c",
+              "value": "${property_address.city}"
+            },
+            {
+              "field": "Date_Listed__c",
+              "value": "${$Flow.CurrentDate}"
+            },
+            {
+              "field": "Description__c",
+              "value": "${property_description}"
+            },
+            {
+              "field": "Location__Latitude__s",
+              "value": "${geocode_address.lat}"
+            },
+            {
+              "field": "Location__Longitude__s",
+              "value": "${geocode_address.lon}"
+            },
+            {
+              "field": "Name",
+              "value": "${property_name}"
+            },
+            {
+              "field": "Price__c",
+              "value": "${property_price}"
+            },
+            {
+              "field": "State__c",
+              "value": "${property_address.province}"
+            },
+            {
+              "field": "Status__c",
+              "value": "Available"
+            },
+            {
+              "field": "Tags__c",
+              "value": "${property_tags}"
+            },
+            {
+              "field": "Zip__c",
+              "value": "${property_address.postalCode}"
+            }
+          ]
+        }
+      ],
+      "record_updates": [
+        {
+          "name": "set_main_picture",
+          "label": "Set Property Main Picture & Thumbnail",
+          "object": "Property__c",
+          "fields": [
+            {
+              "field": "Picture__c",
+              "value": "${main_picture_url}"
+            },
+            {
+              "field": "Thumbnail__c",
+              "value": "${main_picture_url}"
+            }
+          ]
+        }
+      ],
+      "apex_calls": [
+        {
+          "name": "geocode_address",
+          "label": "Geocode Address",
+          "action_name": "GeocodingService",
+          "action_type": "apex"
+        }
+      ],
+      "email_alerts": [],
+      "chatter_posts": [],
+      "screens": [
+        {
+          "name": "address",
+          "label": "Address",
+          "fields": [
+            {
+              "name": "property_address",
+              "label": null,
+              "type": "ComponentInstance",
+              "required": true,
+              "data_type": null
+            }
+          ]
+        },
+        {
+          "name": "Error2",
+          "label": "Error",
+          "fields": [
+            {
+              "name": "error2_text",
+              "label": "<p>Unknown error retrieving uploaded picture.</p>",
+              "type": "DisplayText",
+              "required": null,
+              "data_type": null
+            }
+          ]
+        },
+        {
+          "name": "Error3",
+          "label": "Error",
+          "fields": [
+            {
+              "name": "error3_text",
+              "label": "<p><span style=\"background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);\">Unknown error retrieving uploaded picture.</span></p>",
+              "type": "DisplayText",
+              "required": null,
+              "data_type": null
+            }
+          ]
+        },
+        {
+          "name": "Error4",
+          "label": "Error",
+          "fields": [
+            {
+              "name": "error4_text",
+              "label": "<p><span style=\"background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);\">Unknown error setting picture as Property thumbnail.</span></p>",
+              "type": "DisplayText",
+              "required": null,
+              "data_type": null
+            }
+          ]
+        },
+        {
+          "name": "Error5",
+          "label": "Error",
+          "fields": [
+            {
+              "name": "error5_text",
+              "label": "<p>Error retrieving geocoded address.</p>",
+              "type": "DisplayText",
+              "required": null,
+              "data_type": null
+            }
+          ]
+        },
+        {
+          "name": "error_creating_records",
+          "label": "Error",
+          "fields": [
+            {
+              "name": "error",
+              "label": "<p>Error creating records. Try again.</p>",
+              "type": "DisplayText",
+              "required": null,
+              "data_type": null
+            }
+          ]
+        },
+        {
+          "name": "navigate_to_record_detail",
+          "label": "Navigate to Record",
+          "fields": [
+            {
+              "name": "navigate_to_record_lwc",
+              "label": null,
+              "type": "ComponentInstance",
+              "required": true,
+              "data_type": null
+            }
+          ]
+        },
+        {
+          "name": "new_property",
+          "label": "New Property",
+          "fields": [
+            {
+              "name": "property_name",
+              "label": "Property Name",
+              "type": "InputField",
+              "required": true,
+              "data_type": "String"
+            },
+            {
+              "name": "property_description",
+              "label": "Description",
+              "type": "InputField",
+              "required": false,
+              "data_type": "String"
+            },
+            {
+              "name": "property_broker",
+              "label": null,
+              "type": "ComponentInstance",
+              "required": true,
+              "data_type": null
+            },
+            {
+              "name": "property_price",
+              "label": "Price",
+              "type": "InputField",
+              "required": true,
+              "data_type": "Currency"
+            }
+          ]
+        },
+        {
+          "name": "property_details",
+          "label": "Property Details",
+          "fields": [
+            {
+              "name": "number_of_beds",
+              "label": "Number of Bedrooms",
+              "type": "InputField",
+              "required": false,
+              "data_type": "Number"
+            },
+            {
+              "name": "number_of_baths",
+              "label": "Number of Bathrooms",
+              "type": "InputField",
+              "required": false,
+              "data_type": "Number"
+            },
+            {
+              "name": "property_tags",
+              "label": "Tags",
+              "type": "InputField",
+              "required": false,
+              "data_type": "String"
+            }
+          ]
+        },
+        {
+          "name": "upload_picture",
+          "label": "Upload Picture",
+          "fields": [
+            {
+              "name": "property_picture",
+              "label": null,
+              "type": "ComponentInstance",
+              "required": true,
+              "data_type": null
+            }
+          ]
+        }
+      ],
+      "formulas": [
+        {
+          "name": "main_picture_url",
+          "expression": "\"/sfc/servlet.shepherd/version/download/\" + {!get_main_content_version.Id}",
+          "data_type": "String",
+          "description": "Main picture URL that we'll use as thumbnail"
+        }
+      ],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": null,
+      "requires_change": null
+    },
+    {
+      "flow_name": "Opportunity Won Account Priority Actions",
+      "developer_name": "Opportunity_Won_Account_Priority_Actions",
+      "process_type": "Workflow",
+      "trigger_type": null,
+      "trigger_object": null,
+      "trigger_conditions": [],
+      "decisions": [
+        {
+          "name": "myDecision",
+          "label": "myDecision",
+          "rules": [
+            {
+              "name": "myRule_1",
+              "label": ">1Lakh make high Priority",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "myVariable_current.Amount",
+                  "operator": "GreaterThanOrEqualTo",
+                  "right": 100000.0
+                },
+                {
+                  "left": "myVariable_current.IsWon",
+                  "operator": "EqualTo",
+                  "right": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "myDecision2",
+          "label": "myDecision2",
+          "rules": [
+            {
+              "name": "myRule_3",
+              "label": "Won & Account Priority = Medium",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "myVariable_current.Account.CustomerPriority__c",
+                  "operator": "EqualTo",
+                  "right": "High"
+                },
+                {
+                  "left": "myVariable_current.IsWon",
+                  "operator": "EqualTo",
+                  "right": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "myRule_1_pmetdec",
+          "label": "Previously Met Decision",
+          "rules": [
+            {
+              "name": "myRule_1_pmetnullrule",
+              "label": "Previously Met - Null",
+              "condition_logic": "or",
+              "conditions": [
+                {
+                  "left": "myVariable_old",
+                  "operator": "IsNull",
+                  "right": true
+                }
+              ]
+            },
+            {
+              "name": "myRule_1_pmetrule",
+              "label": "Previously Met - Prev",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "myVariable_old.Amount",
+                  "operator": "GreaterThanOrEqualTo",
+                  "right": 100000.0
+                },
+                {
+                  "left": "myVariable_old.IsWon",
+                  "operator": "EqualTo",
+                  "right": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "myRule_3_pmetdec",
+          "label": "Previously Met Decision",
+          "rules": [
+            {
+              "name": "myRule_3_pmetnullrule",
+              "label": "Previously Met - Null",
+              "condition_logic": "or",
+              "conditions": [
+                {
+                  "left": "myVariable_old",
+                  "operator": "IsNull",
+                  "right": true
+                }
+              ]
+            },
+            {
+              "name": "myRule_3_pmetrule",
+              "label": "Previously Met - Prev",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "myVariable_old.Account.CustomerPriority__c",
+                  "operator": "EqualTo",
+                  "right": "High"
+                },
+                {
+                  "left": "myVariable_old.IsWon",
+                  "operator": "EqualTo",
+                  "right": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "record_lookups": [],
+      "record_creates": [],
+      "record_updates": [
+        {
+          "name": "myRule_1_A1",
+          "label": "Acc to HIGH Priority",
+          "object": "Account",
+          "fields": [
+            {
+              "field": "CustomerPriority__c",
+              "value": "High"
+            }
+          ]
+        }
+      ],
+      "apex_calls": [],
+      "email_alerts": [],
+      "chatter_posts": [
+        {
+          "name": "myRule_3_A1",
+          "label": "Post to Sales Group",
+          "action_name": "chatterPost",
+          "action_type": "chatterPost"
+        }
+      ],
+      "screens": [],
+      "formulas": [],
+      "variables": [
+        {
+          "name": "myVariable_current",
+          "data_type": "SObject",
+          "object_type": "Opportunity",
+          "is_input": true,
+          "is_output": true
+        },
+        {
+          "name": "myVariable_old",
+          "data_type": "SObject",
+          "object_type": "Opportunity",
+          "is_input": true,
+          "is_output": false
+        },
+        {
+          "name": "RecursiveCountVariable",
+          "data_type": "Number",
+          "object_type": null,
+          "is_input": true,
+          "is_output": false
+        }
+      ],
+      "loops": []
+    },
+    {
+      "flow_name": "Case Closed chatter",
+      "developer_name": "Case_Closed_chatter",
+      "process_type": "AutoLaunchedFlow",
+      "trigger_type": "RecordAfterSave",
+      "trigger_object": "Case",
+      "trigger_conditions": [
+        {
+          "field": "Status",
+          "operator": "EqualTo",
+          "value": "Closed"
+        }
+      ],
+      "decisions": [],
+      "record_lookups": [],
+      "record_creates": [],
+      "record_updates": [],
+      "apex_calls": [],
+      "email_alerts": [],
+      "chatter_posts": [
+        {
+          "name": "Post_To_chatter_Message",
+          "label": "Post To chatter Message",
+          "action_name": "chatterPost",
+          "action_type": "chatterPost"
+        }
+      ],
+      "screens": [],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": "Update",
+      "requires_change": true
+    },
+    {
+      "flow_name": "Survey Form",
+      "developer_name": "Survey_Form",
+      "process_type": "Flow",
+      "trigger_type": null,
+      "trigger_object": null,
+      "trigger_conditions": [],
+      "decisions": [
+        {
+          "name": "Interested_or_not",
+          "label": "Interested or not",
+          "rules": [
+            {
+              "name": "Interested_Outcome",
+              "label": "Interested Outcome",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "Are_you_interested_in_taking_survey",
+                  "operator": "EqualTo",
+                  "right": "${Yes}"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "record_lookups": [],
+      "record_creates": [
+        {
+          "name": "Create_Survey_Records",
+          "label": "Create Survey Records",
+          "object": "Survey__c",
+          "fields": [
+            {
+              "field": "Additional_Comment__c",
+              "value": "${Any_Additional_Comment}"
+            },
+            {
+              "field": "Name__c",
+              "value": "${Enter_Your_Name}"
+            },
+            {
+              "field": "Rating__c",
+              "value": "${How_will_you_rate_our_website}"
+            }
+          ]
+        }
+      ],
+      "record_updates": [],
+      "apex_calls": [],
+      "email_alerts": [],
+      "chatter_posts": [],
+      "screens": [
+        {
+          "name": "Interested_in_Survey_Check",
+          "label": "Interested in Survey Check",
+          "fields": [
+            {
+              "name": "Are_you_interested_in_taking_survey",
+              "label": "Are you interested in taking survey",
+              "type": "DropdownBox",
+              "required": false,
+              "data_type": "String"
+            }
+          ]
+        },
+        {
+          "name": "Not_Interested_Scren",
+          "label": "Not Interested Scren",
+          "fields": [
+            {
+              "name": "Thank_you_message",
+              "label": "<p>Thank you for your response.</p>",
+              "type": "DisplayText",
+              "required": null,
+              "data_type": null
+            }
+          ]
+        },
+        {
+          "name": "Survey_Question_Screen",
+          "label": "Survey Question Screen",
+          "fields": [
+            {
+              "name": "Enter_Your_Name",
+              "label": "Enter Your Name",
+              "type": "InputField",
+              "required": true,
+              "data_type": "String"
+            },
+            {
+              "name": "How_will_you_rate_our_website",
+              "label": "How will you rate our website",
+              "type": "DropdownBox",
+              "required": false,
+              "data_type": "String"
+            },
+            {
+              "name": "Any_Additional_Comment",
+              "label": "Any Additional Comment",
+              "type": "LargeTextArea",
+              "required": false,
+              "data_type": null
+            }
+          ]
+        }
+      ],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": null,
+      "requires_change": null
+    },
+    {
+      "flow_name": "Notify deal closed",
+      "developer_name": "Notify_deal_closed",
+      "process_type": "AutoLaunchedFlow",
+      "trigger_type": "RecordAfterSave",
+      "trigger_object": "Opportunity",
+      "trigger_conditions": [
+        {
+          "field": "StageName",
+          "operator": "EqualTo",
+          "value": "Closed Won"
+        }
+      ],
+      "decisions": [],
+      "record_lookups": [],
+      "record_creates": [],
+      "record_updates": [],
+      "apex_calls": [],
+      "email_alerts": [
+        {
+          "name": "Notify_the_opportunity_owner",
+          "label": "Notify the opportunity owner",
+          "action_name": "Opportunity.Email_alert_for_opportunity_closed_to_owner",
+          "action_type": "emailAlert"
+        }
+      ],
+      "chatter_posts": [],
+      "screens": [],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": "Update",
+      "requires_change": true
+    },
+    {
+      "flow_name": "Account MerageDemerage Event Flow",
+      "developer_name": "Account_MerageDemerage_Event_Flow",
+      "process_type": "AutoLaunchedFlow",
+      "trigger_type": "PlatformEvent",
+      "trigger_object": "Account_MerageDemerage__e",
+      "trigger_conditions": [],
+      "decisions": [],
+      "record_lookups": [],
+      "record_creates": [
+        {
+          "name": "CRN_Merage",
+          "label": "CRN Merage",
+          "object": "CRN_Merage__c",
+          "fields": [
+            {
+              "field": "Status_Reason__c",
+              "value": "${$Record.Status_Reason__c}"
+            },
+            {
+              "field": "Status__c",
+              "value": "${$Record.Status__c}"
+            },
+            {
+              "field": "UCIC__c",
+              "value": "${$Record.UCIC__c}"
+            },
+            {
+              "field": "srcSystemId__c",
+              "value": "${$Record.srcSystemId__c}"
+            }
+          ]
+        }
+      ],
+      "record_updates": [],
+      "apex_calls": [],
+      "email_alerts": [],
+      "chatter_posts": [],
+      "screens": [],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": null,
+      "requires_change": null
+    },
+    {
+      "flow_name": "Platform Event Trigger",
+      "developer_name": "Platform_Event_Trigger",
+      "process_type": "AutoLaunchedFlow",
+      "trigger_type": "PlatformEvent",
+      "trigger_object": "Notification_Event__e",
+      "trigger_conditions": [],
+      "decisions": [],
+      "record_lookups": [],
+      "record_creates": [],
+      "record_updates": [],
+      "apex_calls": [],
+      "email_alerts": [],
+      "chatter_posts": [
+        {
+          "name": "Platform_Event_Message_recieve",
+          "label": "Platform Event Message recieve",
+          "action_name": "chatterPost",
+          "action_type": "chatterPost"
+        }
+      ],
+      "screens": [],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": null,
+      "requires_change": null
+    },
+    {
+      "flow_name": "offer_to_lead",
+      "developer_name": "offer_to_lead",
+      "process_type": "AutoLaunchedFlow",
+      "trigger_type": "RecordAfterSave",
+      "trigger_object": "Offer__c",
+      "trigger_conditions": [
+        {
+          "field": "Product__c",
+          "operator": "EqualTo",
+          "value": "Credit Card"
+        },
+        {
+          "field": "Offer_Name__c",
+          "operator": "EqualTo",
+          "value": "Credit Card"
+        },
+        {
+          "field": "Product_Category__c",
+          "operator": "EqualTo",
+          "value": "Credit Card"
+        },
+        {
+          "field": "CustomerID__c",
+          "operator": "NotEqualTo",
+          "value": ""
+        },
+        {
+          "field": "Account_Number__c",
+          "operator": "NotEqualTo",
+          "value": ""
+        },
+        {
+          "field": "External_Offer_ID__c",
+          "operator": "NotEqualTo",
+          "value": ""
+        }
+      ],
+      "decisions": [],
+      "record_lookups": [],
+      "record_creates": [
+        {
+          "name": "offer_to_lead_record",
+          "label": "offer_to_lead_record",
+          "object": "Lead",
+          "fields": [
+            {
+              "field": "Campaign__c",
+              "value": "${$Record.Campaign__c}"
+            },
+            {
+              "field": "City",
+              "value": "${$Record.Office_City__c}"
+            },
+            {
+              "field": "Company",
+              "value": "IDFC"
+            },
+            {
+              "field": "Company_Name__c",
+              "value": "IDFC"
+            },
+            {
+              "field": "Customer_Category__c",
+              "value": "Individual"
+            },
+            {
+              "field": "Eligibility_for_verif_waiver_or_not__c",
+              "value": "${$Record.Eligibility_for_verif_waiver_or_not__c}"
+            },
+            {
+              "field": "Email",
+              "value": "${$Record.CustomerID__r.Email__c}"
+            },
+            {
+              "field": "FirstName",
+              "value": "${$Record.CustomerID__r.Name}"
+            },
+            {
+              "field": "LastName",
+              "value": "Yadav"
+            },
+            {
+              "field": "Lead_Source__c",
+              "value": "Internet"
+            },
+            {
+              "field": "Lead_Sub_Status__c",
+              "value": "New"
+            },
+            {
+              "field": "Mobile_No__c",
+              "value": "${$Record.Mobile_no__c}"
+            },
+            {
+              "field": "Offer_ID__c",
+              "value": "${$Record.Name}"
+            },
+            {
+              "field": "Phone",
+              "value": "${$Record.Mobile_no__c}"
+            },
+            {
+              "field": "PostalCode",
+              "value": "${$Record.Office_PIN_Code__c}"
+            },
+            {
+              "field": "Product__c",
+              "value": "${$Record.Product__c}"
+            },
+            {
+              "field": "Related_Account__c",
+              "value": "${$Record.CustomerID__c}"
+            },
+            {
+              "field": "Segment_Type__c",
+              "value": "${$Record.Product_Category__c}"
+            },
+            {
+              "field": "State",
+              "value": "${$Record.Office_State__c}"
+            },
+            {
+              "field": "Status",
+              "value": "New"
+            }
+          ]
+        }
+      ],
+      "record_updates": [],
+      "apex_calls": [],
+      "email_alerts": [],
+      "chatter_posts": [],
+      "screens": [],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": "Create",
+      "requires_change": null
+    },
+    {
+      "flow_name": "Offertoleadconversion",
+      "developer_name": "Offertoleadconversion",
+      "process_type": "Flow",
+      "trigger_type": null,
+      "trigger_object": null,
+      "trigger_conditions": [],
+      "decisions": [
+        {
+          "name": "To_Check_offer_Active",
+          "label": "To Check offer Active",
+          "rules": [
+            {
+              "name": "to_check_offer_status",
+              "label": "to check offer status",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "offer_Record.Offer_Status__c",
+                  "operator": "EqualTo",
+                  "right": "Active"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "record_lookups": [
+        {
+          "name": "offer_Record",
+          "label": "offer Record",
+          "object": "Offer__c",
+          "filters": []
+        }
+      ],
+      "record_creates": [
+        {
+          "name": "offer_to_lead_creation",
+          "label": "offer to lead creation",
+          "object": "Lead",
+          "fields": [
+            {
+              "field": "Campaign__c",
+              "value": "${offer_Record.Campaign__c}"
+            },
+            {
+              "field": "City",
+              "value": "${offer_Record.Office_City__c}"
+            },
+            {
+              "field": "Company",
+              "value": "IDFC"
+            },
+            {
+              "field": "Customer_Category__c",
+              "value": "Individual"
+            },
+            {
+              "field": "Eligibility_for_verif_waiver_or_not__c",
+              "value": "${offer_Record.Eligibility_for_verif_waiver_or_not__c}"
+            },
+            {
+              "field": "Email",
+              "value": "${offer_Record.Email__c}"
+            },
+            {
+              "field": "FirstName",
+              "value": "${offer_Record.CustomerID__r.Name}"
+            },
+            {
+              "field": "LastName",
+              "value": "Yadav"
+            },
+            {
+              "field": "Lead_Source__c",
+              "value": "Internet"
+            },
+            {
+              "field": "Lead_Sub_Status__c",
+              "value": "New"
+            },
+            {
+              "field": "Offer_ID__c",
+              "value": "${offer_Record.Name}"
+            },
+            {
+              "field": "PostalCode",
+              "value": "${offer_Record.Office_PIN_Code__c}"
+            },
+            {
+              "field": "Product__c",
+              "value": "${offer_Record.Product__c}"
+            },
+            {
+              "field": "Related_Account__c",
+              "value": "${offer_Record.CustomerID__c}"
+            },
+            {
+              "field": "Segment_Type__c",
+              "value": "${offer_Record.Product__c}"
+            },
+            {
+              "field": "State",
+              "value": "${offer_Record.Office_State__c}"
+            },
+            {
+              "field": "Status",
+              "value": "New"
+            },
+            {
+              "field": "isNew__c",
+              "value": true
+            }
+          ]
+        }
+      ],
+      "record_updates": [],
+      "apex_calls": [],
+      "email_alerts": [],
+      "chatter_posts": [],
+      "screens": [
+        {
+          "name": "Offer_Cannot_Convert",
+          "label": "Offer Cannot Convert",
+          "fields": [
+            {
+              "name": "Error_Text",
+              "label": "<p>Offer Cannot Convert because Offer is Not Active</p>",
+              "type": "DisplayText",
+              "required": null,
+              "data_type": null
+            }
+          ]
+        }
+      ],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": null,
+      "requires_change": null
+    },
+    {
+      "flow_name": "Lead Communication Flow",
+      "developer_name": "Lead_Communication_Flow",
+      "process_type": "AutoLaunchedFlow",
+      "trigger_type": "RecordAfterSave",
+      "trigger_object": "Lead",
+      "trigger_conditions": [
+        {
+          "field": "Product__c",
+          "operator": "EqualTo",
+          "value": "Credit Card"
+        },
+        {
+          "field": "Email",
+          "operator": "IsNull",
+          "value": false
+        }
+      ],
+      "decisions": [
+        {
+          "name": "To_check_Creation_and_Closure_Lead",
+          "label": "To check Creation and Closure Lead",
+          "rules": [
+            {
+              "name": "Is_Lead_Created",
+              "label": "Is Lead Created",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "$Record.isNew__c",
+                  "operator": "EqualTo",
+                  "right": true
+                }
+              ]
+            },
+            {
+              "name": "Is_Lead_Closed",
+              "label": "Is Lead Closed",
+              "condition_logic": "and",
+              "conditions": [
+                {
+                  "left": "$Record.isNew__c",
+                  "operator": "EqualTo",
+                  "right": false
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "record_lookups": [],
+      "record_creates": [
+        {
+          "name": "LeadEmailTaskCreation",
+          "label": "LeadEmailTaskCreation",
+          "object": "Task",
+          "fields": [
+            {
+              "field": "ActivityDate",
+              "value": "${$Flow.CurrentDate}"
+            },
+            {
+              "field": "CallType",
+              "value": "Internal"
+            },
+            {
+              "field": "Send_Email__c",
+              "value": true
+            },
+            {
+              "field": "Status",
+              "value": "Completed"
+            },
+            {
+              "field": "Subject",
+              "value": "Email"
+            },
+            {
+              "field": "TaskSubtype",
+              "value": "Email"
+            }
+          ]
+        }
+      ],
+      "record_updates": [],
+      "apex_calls": [],
+      "email_alerts": [
+        {
+          "name": "On_Lead_Closure",
+          "label": "On Lead Closure",
+          "action_name": "Lead.This_Email_Alert_will_trigger_on_Lead_Closure",
+          "action_type": "emailAlert"
+        },
+        {
+          "name": "On_Lead_Creation",
+          "label": "On Lead Creation",
+          "action_name": "Lead.This_Email_Alert_will_trigger_on_Lead_Creation",
+          "action_type": "emailAlert"
+        },
+        {
+          "name": "This_is_default_email",
+          "label": "This is default email",
+          "action_name": "Lead.This_Email_Alert_will_trigger_on_Lead_Closure",
+          "action_type": "emailAlert"
+        }
+      ],
+      "chatter_posts": [],
+      "screens": [],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": "CreateAndUpdate",
+      "requires_change": null
+    },
+    {
+      "flow_name": "Schedule Flow Example",
+      "developer_name": "Schedule_Flow_Example",
+      "process_type": "AutoLaunchedFlow",
+      "trigger_type": "Scheduled",
+      "trigger_object": "Case",
+      "trigger_conditions": [],
+      "decisions": [],
+      "record_lookups": [],
+      "record_creates": [],
+      "record_updates": [
+        {
+          "name": "Case_Priority",
+          "label": "Case Priority",
+          "object": "Case",
+          "fields": [
+            {
+              "field": "Description",
+              "value": "Priority Updated by Schedule Flow"
+            },
+            {
+              "field": "Priority",
+              "value": "High"
+            }
+          ]
+        }
+      ],
+      "apex_calls": [],
+      "email_alerts": [],
+      "chatter_posts": [],
+      "screens": [],
+      "formulas": [],
+      "variables": [],
+      "loops": [],
+      "record_trigger_type": null,
+      "requires_change": null
+    }
+  ]
+}

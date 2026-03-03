@@ -1,0 +1,617 @@
+{
+  "Id": "301J2000000c27bIAA",
+  "FullName": "Offertoleadconversion",
+  "MasterLabel": "Offertoleadconversion",
+  "Metadata": {
+    "actionCalls": [],
+    "apexPluginCalls": [],
+    "apiVersion": 61.0,
+    "assignments": [],
+    "choices": [],
+    "collectionProcessors": [],
+    "constants": [],
+    "customErrors": [],
+    "decisions": [
+      {
+        "attributes": null,
+        "defaultConnector": {
+          "isGoTo": null,
+          "processMetadataValues": [],
+          "targetReference": "Offer_Cannot_Convert"
+        },
+        "defaultConnectorLabel": "Default Outcome",
+        "description": "This decision is used to check offer status",
+        "elementSubtype": null,
+        "label": "To Check offer Active",
+        "locationX": 551,
+        "locationY": 434,
+        "name": "To_Check_offer_Active",
+        "processMetadataValues": [],
+        "rules": [
+          {
+            "attributes": null,
+            "conditionLogic": "and",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "offer_Record.Offer_Status__c",
+                "operator": "EqualTo",
+                "processMetadataValues": [],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": "Active"
+                }
+              }
+            ],
+            "connector": {
+              "isGoTo": null,
+              "processMetadataValues": [],
+              "targetReference": "offer_to_lead_creation"
+            },
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": "to check offer status",
+            "name": "to_check_offer_status",
+            "processMetadataValues": []
+          }
+        ]
+      }
+    ],
+    "description": null,
+    "dynamicChoiceSets": [],
+    "environments": [
+      "Default"
+    ],
+    "exitRules": [],
+    "formulas": [],
+    "interviewLabel": "Offertoleadconversion {!$Flow.CurrentDateTime}",
+    "isAdditionalPermissionRequiredToRun": null,
+    "isOverridable": null,
+    "isTemplate": null,
+    "label": "Offertoleadconversion",
+    "loops": [],
+    "migratedFromWorkflowRuleName": null,
+    "orchestratedStages": [],
+    "overriddenFlow": null,
+    "processMetadataValues": [
+      {
+        "name": "BuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      },
+      {
+        "name": "CanvasMode",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "FREE_FORM_CANVAS"
+        }
+      },
+      {
+        "name": "OriginBuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      }
+    ],
+    "processType": "Flow",
+    "recordCreates": [
+      {
+        "assignRecordIdToReference": null,
+        "connector": null,
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "inputAssignments": [
+          {
+            "field": "Campaign__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Campaign__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "City",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Office_City__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "Company",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "IDFC"
+            }
+          },
+          {
+            "field": "Customer_Category__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Individual"
+            }
+          },
+          {
+            "field": "Eligibility_for_verif_waiver_or_not__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Eligibility_for_verif_waiver_or_not__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "Email",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Email__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "FirstName",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.CustomerID__r.Name",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "LastName",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Yadav"
+            }
+          },
+          {
+            "field": "Lead_Source__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Internet"
+            }
+          },
+          {
+            "field": "Lead_Sub_Status__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "New"
+            }
+          },
+          {
+            "field": "Offer_ID__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Name",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "PostalCode",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Office_PIN_Code__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "Product__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Product__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "Related_Account__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.CustomerID__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "Segment_Type__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Product__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "State",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "offer_Record.Office_State__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "Status",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "New"
+            }
+          },
+          {
+            "field": "isNew__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": true,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          }
+        ],
+        "inputReference": null,
+        "label": "offer to lead creation",
+        "locationX": 336,
+        "locationY": 536,
+        "name": "offer_to_lead_creation",
+        "object": "Lead",
+        "processMetadataValues": [],
+        "storeOutputAutomatically": true
+      }
+    ],
+    "recordDeletes": [],
+    "recordLookups": [
+      {
+        "assignNullValuesIfNoRecordsFound": false,
+        "connector": {
+          "isGoTo": null,
+          "processMetadataValues": [],
+          "targetReference": "To_Check_offer_Active"
+        },
+        "description": "This will fetch all records",
+        "elementSubtype": null,
+        "faultConnector": null,
+        "filterLogic": null,
+        "filters": [],
+        "getFirstRecordOnly": true,
+        "label": "offer Record",
+        "locationX": 537,
+        "locationY": 258,
+        "name": "offer_Record",
+        "object": "Offer__c",
+        "outputAssignments": [],
+        "outputReference": null,
+        "processMetadataValues": [],
+        "queriedFields": null,
+        "sortField": null,
+        "sortOrder": null,
+        "storeOutputAutomatically": true
+      }
+    ],
+    "recordRollbacks": [],
+    "recordUpdates": [],
+    "runInMode": null,
+    "screens": [
+      {
+        "actions": [],
+        "allowBack": false,
+        "allowFinish": true,
+        "allowPause": false,
+        "backButtonLabel": null,
+        "connector": null,
+        "description": null,
+        "elementSubtype": null,
+        "fields": [
+          {
+            "attributes": null,
+            "choiceReferences": null,
+            "dataType": null,
+            "dataTypeMappings": [],
+            "defaultSelectedChoiceReference": null,
+            "defaultValue": null,
+            "description": null,
+            "extensionName": null,
+            "fieldText": "<p>Offer Cannot Convert because Offer is Not Active</p>",
+            "fieldType": "DisplayText",
+            "fields": [],
+            "helpText": null,
+            "inputParameters": [],
+            "inputsOnNextNavToAssocScrn": null,
+            "isDisabled": null,
+            "isReadOnly": null,
+            "isRequired": null,
+            "isVisible": null,
+            "name": "Error_Text",
+            "objectFieldReference": null,
+            "outputParameters": [],
+            "processMetadataValues": [],
+            "regionContainerType": null,
+            "scale": null,
+            "storeOutputAutomatically": null,
+            "validationRule": null,
+            "visibilityRule": null
+          }
+        ],
+        "helpText": null,
+        "label": "Offer Cannot Convert",
+        "locationX": 859,
+        "locationY": 504,
+        "name": "Offer_Cannot_Convert",
+        "nextOrFinishButtonLabel": "Close",
+        "pauseButtonLabel": null,
+        "pausedText": null,
+        "processMetadataValues": [],
+        "rules": [],
+        "showFooter": true,
+        "showHeader": false,
+        "triggers": []
+      }
+    ],
+    "sourceTemplate": null,
+    "start": {
+      "connector": {
+        "isGoTo": null,
+        "processMetadataValues": [],
+        "targetReference": "offer_Record"
+      },
+      "description": null,
+      "doesRequireRecordChangedToMeetCriteria": null,
+      "elementSubtype": null,
+      "entryType": null,
+      "filterFormula": null,
+      "filterLogic": null,
+      "filters": [],
+      "form": null,
+      "label": null,
+      "locationX": 62,
+      "locationY": 233,
+      "name": null,
+      "object": null,
+      "objectContainer": null,
+      "processMetadataValues": [],
+      "recordTriggerType": null,
+      "schedule": null,
+      "scheduledPaths": [],
+      "segment": null,
+      "triggerType": null
+    },
+    "startElementReference": null,
+    "status": "Active",
+    "steps": [],
+    "subflows": [],
+    "textTemplates": [],
+    "timeZoneSidKey": null,
+    "transforms": [],
+    "triggerOrder": null,
+    "urls": null,
+    "variables": [],
+    "waits": []
+  },
+  "ProcessType": "Flow",
+  "TriggerType": null,
+  "Status": "Active",
+  "ApiVersion": 61.0,
+  "VersionNumber": 15,
+  "Description": null
+}

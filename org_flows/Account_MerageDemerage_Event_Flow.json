@@ -1,0 +1,228 @@
+{
+  "Id": "301J2000000c9H9IAI",
+  "FullName": "Account_MerageDemerage_Event_Flow",
+  "MasterLabel": "Account MerageDemerage Event Flow",
+  "Metadata": {
+    "actionCalls": [],
+    "apexPluginCalls": [],
+    "apiVersion": 66.0,
+    "assignments": [],
+    "choices": [],
+    "collectionProcessors": [],
+    "constants": [],
+    "customErrors": [],
+    "decisions": [],
+    "description": null,
+    "dynamicChoiceSets": [],
+    "environments": [
+      "Default"
+    ],
+    "exitRules": [],
+    "formulas": [],
+    "interviewLabel": "Account MerageDemerage Event Flow {!$Flow.CurrentDateTime}",
+    "isAdditionalPermissionRequiredToRun": null,
+    "isOverridable": null,
+    "isTemplate": null,
+    "label": "Account MerageDemerage Event Flow",
+    "loops": [],
+    "migratedFromWorkflowRuleName": null,
+    "orchestratedStages": [],
+    "overriddenFlow": null,
+    "processMetadataValues": [
+      {
+        "name": "BuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      },
+      {
+        "name": "CanvasMode",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "AUTO_LAYOUT_CANVAS"
+        }
+      },
+      {
+        "name": "OriginBuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      }
+    ],
+    "processType": "AutoLaunchedFlow",
+    "recordCreates": [
+      {
+        "assignRecordIdToReference": null,
+        "connector": null,
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "inputAssignments": [
+          {
+            "field": "Status_Reason__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Record.Status_Reason__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "Status__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Record.Status__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "UCIC__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Record.UCIC__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "srcSystemId__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Record.srcSystemId__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          }
+        ],
+        "inputReference": null,
+        "label": "CRN Merage",
+        "locationX": 0,
+        "locationY": 0,
+        "name": "CRN_Merage",
+        "object": "CRN_Merage__c",
+        "processMetadataValues": [],
+        "storeOutputAutomatically": true
+      }
+    ],
+    "recordDeletes": [],
+    "recordLookups": [],
+    "recordRollbacks": [],
+    "recordUpdates": [],
+    "runInMode": null,
+    "screens": [],
+    "sourceTemplate": null,
+    "start": {
+      "connector": {
+        "isGoTo": null,
+        "processMetadataValues": [],
+        "targetReference": "CRN_Merage"
+      },
+      "description": null,
+      "doesRequireRecordChangedToMeetCriteria": null,
+      "elementSubtype": null,
+      "entryType": null,
+      "filterFormula": null,
+      "filterLogic": null,
+      "filters": [],
+      "form": null,
+      "label": null,
+      "locationX": 0,
+      "locationY": 0,
+      "name": null,
+      "object": "Account_MerageDemerage__e",
+      "objectContainer": null,
+      "processMetadataValues": [],
+      "recordTriggerType": null,
+      "schedule": null,
+      "scheduledPaths": [],
+      "segment": null,
+      "triggerType": "PlatformEvent"
+    },
+    "startElementReference": null,
+    "status": "Active",
+    "steps": [],
+    "subflows": [],
+    "textTemplates": [],
+    "timeZoneSidKey": null,
+    "transforms": [],
+    "triggerOrder": null,
+    "urls": null,
+    "variables": [],
+    "waits": []
+  },
+  "ProcessType": "AutoLaunchedFlow",
+  "TriggerType": null,
+  "Status": "Active",
+  "ApiVersion": 66.0,
+  "VersionNumber": 1,
+  "Description": null
+}

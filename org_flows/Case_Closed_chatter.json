@@ -1,0 +1,217 @@
+{
+  "Id": "301J2000000bu3LIAQ",
+  "FullName": "Case_Closed_chatter",
+  "MasterLabel": "Case Closed chatter",
+  "Metadata": {
+    "actionCalls": [
+      {
+        "actionName": "chatterPost",
+        "actionType": "chatterPost",
+        "connector": null,
+        "dataTypeMappings": [],
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "flowTransactionModel": "CurrentTransaction",
+        "inputParameters": [
+          {
+            "name": "text",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Congratulations, Case has been successfully closed"
+            }
+          },
+          {
+            "name": "subjectNameOrId",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "0F9J2000000TNGAKA4"
+            }
+          }
+        ],
+        "label": "Post To chatter Message",
+        "locationX": 539,
+        "locationY": 400,
+        "name": "Post_To_chatter_Message",
+        "nameSegment": "chatterPost",
+        "outputConfigParams": [],
+        "outputParameters": [],
+        "processMetadataValues": [],
+        "storeOutputAutomatically": true,
+        "versionSegment": null
+      }
+    ],
+    "apexPluginCalls": [],
+    "apiVersion": 61.0,
+    "assignments": [],
+    "choices": [],
+    "collectionProcessors": [],
+    "constants": [],
+    "customErrors": [],
+    "decisions": [],
+    "description": null,
+    "dynamicChoiceSets": [],
+    "environments": [
+      "Default"
+    ],
+    "exitRules": [],
+    "formulas": [],
+    "interviewLabel": "Case Closed chatter {!$Flow.CurrentDateTime}",
+    "isAdditionalPermissionRequiredToRun": null,
+    "isOverridable": null,
+    "isTemplate": null,
+    "label": "Case Closed chatter",
+    "loops": [],
+    "migratedFromWorkflowRuleName": null,
+    "orchestratedStages": [],
+    "overriddenFlow": null,
+    "processMetadataValues": [
+      {
+        "name": "BuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      },
+      {
+        "name": "CanvasMode",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "FREE_FORM_CANVAS"
+        }
+      },
+      {
+        "name": "OriginBuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      }
+    ],
+    "processType": "AutoLaunchedFlow",
+    "recordCreates": [],
+    "recordDeletes": [],
+    "recordLookups": [],
+    "recordRollbacks": [],
+    "recordUpdates": [],
+    "runInMode": null,
+    "screens": [],
+    "sourceTemplate": null,
+    "start": {
+      "connector": {
+        "isGoTo": null,
+        "processMetadataValues": [],
+        "targetReference": "Post_To_chatter_Message"
+      },
+      "description": null,
+      "doesRequireRecordChangedToMeetCriteria": true,
+      "elementSubtype": null,
+      "entryType": null,
+      "filterFormula": null,
+      "filterLogic": "and",
+      "filters": [
+        {
+          "field": "Status",
+          "operator": "EqualTo",
+          "processMetadataValues": [],
+          "value": {
+            "apexValue": null,
+            "booleanValue": null,
+            "dateTimeValue": null,
+            "dateValue": null,
+            "elementReference": null,
+            "formulaDataType": null,
+            "formulaExpression": null,
+            "numberValue": null,
+            "setupReference": null,
+            "setupReferenceType": null,
+            "sobjectValue": null,
+            "stringValue": "Closed"
+          }
+        }
+      ],
+      "form": null,
+      "label": null,
+      "locationX": 410,
+      "locationY": 48,
+      "name": null,
+      "object": "Case",
+      "objectContainer": null,
+      "processMetadataValues": [],
+      "recordTriggerType": "Update",
+      "schedule": null,
+      "scheduledPaths": [],
+      "segment": null,
+      "triggerType": "RecordAfterSave"
+    },
+    "startElementReference": null,
+    "status": "Active",
+    "steps": [],
+    "subflows": [],
+    "textTemplates": [],
+    "timeZoneSidKey": null,
+    "transforms": [],
+    "triggerOrder": null,
+    "urls": null,
+    "variables": [],
+    "waits": []
+  },
+  "ProcessType": "AutoLaunchedFlow",
+  "TriggerType": null,
+  "Status": "Active",
+  "ApiVersion": 61.0,
+  "VersionNumber": 1,
+  "Description": null
+}

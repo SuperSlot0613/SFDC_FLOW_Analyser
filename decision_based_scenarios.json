@@ -1,0 +1,1027 @@
+{
+  "generated_at": "2026-03-03T19:22:37.801557",
+  "total_scenarios": 87,
+  "flows_analyzed": 11,
+  "categories": [
+    "Decision Logic Analysis",
+    "Null Value Handling",
+    "Default Path Analysis",
+    "Record Lookup Analysis",
+    "Empty Result Handling",
+    "Record Creation Analysis",
+    "Record Update Analysis",
+    "Apex Integration Analysis",
+    "Apex Fault Handling",
+    "Screen Validation Analysis",
+    "Screen Input Analysis",
+    "Formula Analysis",
+    "Decision Thresholds",
+    "Input Variable Analysis",
+    "Output Variable Analysis",
+    "Flow Trigger Conditions",
+    "Flow Trigger Edge Cases"
+  ],
+  "scenarios": [
+    {
+      "id": "decision_If_content_document_found_Content_Document_Link_found",
+      "category": "Decision Logic Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', explain the decision 'If Content Document found' - specifically when does the 'Content Document Found' path execute?",
+      "context": "Conditions: get_main_content_document IsNull False",
+      "expected_analysis": [
+        "get_main_content_document IsNull False"
+      ]
+    },
+    {
+      "id": "decision_null_If_content_document_found_0",
+      "category": "Null Value Handling",
+      "flow": "Create_property",
+      "query": "How does 'Create Property' handle null values for get_main_content_document? What path does the flow take when this is null vs not null?",
+      "context": "Null check: get_main_content_document IsNull = False",
+      "expected_analysis": [
+        "Checks if get_main_content_document is null",
+        "Expected null state: False"
+      ]
+    },
+    {
+      "id": "decision_default_If_content_document_found",
+      "category": "Default Path Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what is the default outcome if NONE of the conditions in 'If Content Document found' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: If Content Document found",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "decision_if_content_version_found_picture_found",
+      "category": "Decision Logic Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', explain the decision 'If Content Version found' - specifically when does the 'Picture Found' path execute?",
+      "context": "Conditions: get_main_content_version IsNull False",
+      "expected_analysis": [
+        "get_main_content_version IsNull False"
+      ]
+    },
+    {
+      "id": "decision_null_if_content_version_found_0",
+      "category": "Null Value Handling",
+      "flow": "Create_property",
+      "query": "How does 'Create Property' handle null values for get_main_content_version? What path does the flow take when this is null vs not null?",
+      "context": "Null check: get_main_content_version IsNull = False",
+      "expected_analysis": [
+        "Checks if get_main_content_version is null",
+        "Expected null state: False"
+      ]
+    },
+    {
+      "id": "decision_default_if_content_version_found",
+      "category": "Default Path Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what is the default outcome if NONE of the conditions in 'If Content Version found' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: If Content Version found",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "lookup_get_main_content_document",
+      "category": "Record Lookup Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', how does the 'Get Main Content Document' query work? What records does it fetch from ContentDocumentLink and what filters are applied?",
+      "context": "Object: ContentDocumentLink, Filters: LinkedEntityId EqualTo ${create_property}",
+      "expected_analysis": [
+        "LinkedEntityId EqualTo ${create_property}"
+      ]
+    },
+    {
+      "id": "lookup_empty_get_main_content_document",
+      "category": "Empty Result Handling",
+      "flow": "Create_property",
+      "query": "What happens in 'Create Property' if the 'Get Main Content Document' query returns NO records? How does the flow handle this scenario?",
+      "context": "Analyzing null/empty handling for ContentDocumentLink query",
+      "expected_analysis": [
+        "Null assignment handling",
+        "Downstream decision impact"
+      ]
+    },
+    {
+      "id": "lookup_get_main_content_version",
+      "category": "Record Lookup Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', how does the 'Get Main Content Version' query work? What records does it fetch from ContentVersion and what filters are applied?",
+      "context": "Object: ContentVersion, Filters: ContentDocumentId EqualTo ${get_main_content_document.ContentDocumentId}, IsLatest EqualTo True",
+      "expected_analysis": [
+        "ContentDocumentId EqualTo ${get_main_content_document.ContentDocumentId}",
+        "IsLatest EqualTo True"
+      ]
+    },
+    {
+      "id": "lookup_empty_get_main_content_version",
+      "category": "Empty Result Handling",
+      "flow": "Create_property",
+      "query": "What happens in 'Create Property' if the 'Get Main Content Version' query returns NO records? How does the flow handle this scenario?",
+      "context": "Analyzing null/empty handling for ContentVersion query",
+      "expected_analysis": [
+        "Null assignment handling",
+        "Downstream decision impact"
+      ]
+    },
+    {
+      "id": "create_create_property",
+      "category": "Record Creation Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what Property__c record is created by 'Create Property'? What fields are set and from where do they get their values?",
+      "context": "Object: Property__c, Fields: Address__c, Baths__c, Beds__c, Broker__c, City__c, Date_Listed__c, Description__c, Location__Latitude__s, Location__Longitude__s, Name, Price__c, State__c, Status__c, Tags__c, Zip__c",
+      "expected_analysis": [
+        "Address__c = ${property_address.street}",
+        "Baths__c = ${number_of_baths}",
+        "Beds__c = ${number_of_beds}",
+        "Broker__c = ${property_broker.recordId}",
+        "City__c = ${property_address.city}",
+        "Date_Listed__c = ${$Flow.CurrentDate}",
+        "Description__c = ${property_description}",
+        "Location__Latitude__s = ${geocode_address.lat}",
+        "Location__Longitude__s = ${geocode_address.lon}",
+        "Name = ${property_name}",
+        "Price__c = ${property_price}",
+        "State__c = ${property_address.province}",
+        "Status__c = Available",
+        "Tags__c = ${property_tags}",
+        "Zip__c = ${property_address.postalCode}"
+      ]
+    },
+    {
+      "id": "update_set_main_picture",
+      "category": "Record Update Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what changes does 'Set Property Main Picture & Thumbnail' make to the record? Which fields are modified?",
+      "context": "Object: Property__c, Updates: 2 fields",
+      "expected_analysis": [
+        "Picture__c -> ${main_picture_url}",
+        "Thumbnail__c -> ${main_picture_url}"
+      ]
+    },
+    {
+      "id": "apex_geocode_address",
+      "category": "Apex Integration Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what does the Apex action 'GeocodingService' do? What inputs does it receive and what outputs does it return?",
+      "context": "Apex class: GeocodingService",
+      "expected_analysis": [
+        "Action: GeocodingService",
+        "Input/output mapping"
+      ]
+    },
+    {
+      "id": "apex_fault_geocode_address",
+      "category": "Apex Fault Handling",
+      "flow": "Create_property",
+      "query": "What happens in 'Create Property' if the Apex callout 'GeocodingService' fails? Is there error handling?",
+      "context": "Analyzing fault connector for GeocodingService",
+      "expected_analysis": [
+        "Fault handling path",
+        "Error recovery"
+      ]
+    },
+    {
+      "id": "screen_address_validation",
+      "category": "Screen Validation Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what are the required fields on the 'Address' screen? What validation happens?",
+      "context": "Screen: Address, Required fields: 1",
+      "expected_analysis": [
+        "property_address (required)"
+      ]
+    },
+    {
+      "id": "screen_address_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Address' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['property_address']",
+      "expected_analysis": [
+        "property_address: None"
+      ]
+    },
+    {
+      "id": "screen_Error2_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['error2_text']",
+      "expected_analysis": [
+        "error2_text: None"
+      ]
+    },
+    {
+      "id": "screen_Error3_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['error3_text']",
+      "expected_analysis": [
+        "error3_text: None"
+      ]
+    },
+    {
+      "id": "screen_Error4_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['error4_text']",
+      "expected_analysis": [
+        "error4_text: None"
+      ]
+    },
+    {
+      "id": "screen_Error5_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['error5_text']",
+      "expected_analysis": [
+        "error5_text: None"
+      ]
+    },
+    {
+      "id": "screen_error_creating_records_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['error']",
+      "expected_analysis": [
+        "error: None"
+      ]
+    },
+    {
+      "id": "screen_navigate_to_record_detail_validation",
+      "category": "Screen Validation Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what are the required fields on the 'Navigate to Record' screen? What validation happens?",
+      "context": "Screen: Navigate to Record, Required fields: 1",
+      "expected_analysis": [
+        "navigate_to_record_lwc (required)"
+      ]
+    },
+    {
+      "id": "screen_navigate_to_record_detail_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Navigate to Record' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['navigate_to_record_lwc']",
+      "expected_analysis": [
+        "navigate_to_record_lwc: None"
+      ]
+    },
+    {
+      "id": "screen_new_property_validation",
+      "category": "Screen Validation Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what are the required fields on the 'New Property' screen? What validation happens?",
+      "context": "Screen: New Property, Required fields: 3",
+      "expected_analysis": [
+        "property_name (required)",
+        "property_broker (required)",
+        "property_price (required)"
+      ]
+    },
+    {
+      "id": "screen_new_property_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'New Property' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['property_name', 'property_description', 'property_broker', 'property_price']",
+      "expected_analysis": [
+        "property_name: String",
+        "property_description: String",
+        "property_broker: None",
+        "property_price: Currency"
+      ]
+    },
+    {
+      "id": "screen_property_details_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Property Details' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['number_of_beds', 'number_of_baths', 'property_tags']",
+      "expected_analysis": [
+        "number_of_beds: Number",
+        "number_of_baths: Number",
+        "property_tags: String"
+      ]
+    },
+    {
+      "id": "screen_upload_picture_validation",
+      "category": "Screen Validation Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', what are the required fields on the 'Upload Picture' screen? What validation happens?",
+      "context": "Screen: Upload Picture, Required fields: 1",
+      "expected_analysis": [
+        "property_picture (required)"
+      ]
+    },
+    {
+      "id": "screen_upload_picture_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Create_property",
+      "query": "What user inputs are collected on the 'Upload Picture' screen in 'Create Property'? What types of data are expected?",
+      "context": "Screen fields: ['property_picture']",
+      "expected_analysis": [
+        "property_picture: None"
+      ]
+    },
+    {
+      "id": "formula_main_picture_url",
+      "category": "Formula Analysis",
+      "flow": "Create_property",
+      "query": "In 'Create Property', explain the formula 'main_picture_url'. What does it calculate and where is the result used?",
+      "context": "Expression: \"/sfc/servlet.shepherd/version/download/\" + {!get_main_content_version.Id}",
+      "expected_analysis": [
+        "Formula: \"/sfc/servlet.shepherd/version/download/\" + {!get_main_content_version.Id}",
+        "Type: String"
+      ]
+    },
+    {
+      "id": "decision_myDecision_myRule_1",
+      "category": "Decision Logic Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', explain the decision 'myDecision' - specifically when does the '>1Lakh make high Priority' path execute?",
+      "context": "Conditions: myVariable_current.Amount GreaterThanOrEqualTo 100000.0 and myVariable_current.IsWon EqualTo True",
+      "expected_analysis": [
+        "myVariable_current.Amount GreaterThanOrEqualTo 100000.0",
+        "myVariable_current.IsWon EqualTo True"
+      ]
+    },
+    {
+      "id": "decision_threshold_myDecision_0",
+      "category": "Decision Thresholds",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "What is the threshold value for myVariable_current.Amount in the 'Opportunity Won Account Priority Actions' flow? What happens when the value is exactly at, above, or below this threshold?",
+      "context": "Threshold condition: myVariable_current.Amount GreaterThanOrEqualTo 100000.0",
+      "expected_analysis": [
+        "Threshold: 100000.0",
+        "Operator: GreaterThanOrEqualTo"
+      ]
+    },
+    {
+      "id": "decision_default_myDecision",
+      "category": "Default Path Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'myDecision' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: myDecision",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "decision_myDecision2_myRule_3",
+      "category": "Decision Logic Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', explain the decision 'myDecision2' - specifically when does the 'Won & Account Priority = Medium' path execute?",
+      "context": "Conditions: myVariable_current.Account.CustomerPriority__c EqualTo High and myVariable_current.IsWon EqualTo True",
+      "expected_analysis": [
+        "myVariable_current.Account.CustomerPriority__c EqualTo High",
+        "myVariable_current.IsWon EqualTo True"
+      ]
+    },
+    {
+      "id": "decision_default_myDecision2",
+      "category": "Default Path Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'myDecision2' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: myDecision2",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "decision_myRule_1_pmetdec_myRule_1_pmetnullrule",
+      "category": "Decision Logic Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', explain the decision 'Previously Met Decision' - specifically when does the 'Previously Met - Null' path execute?",
+      "context": "Conditions: myVariable_old IsNull True",
+      "expected_analysis": [
+        "myVariable_old IsNull True"
+      ]
+    },
+    {
+      "id": "decision_null_myRule_1_pmetdec_0",
+      "category": "Null Value Handling",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "How does 'Opportunity Won Account Priority Actions' handle null values for myVariable_old? What path does the flow take when this is null vs not null?",
+      "context": "Null check: myVariable_old IsNull = True",
+      "expected_analysis": [
+        "Checks if myVariable_old is null",
+        "Expected null state: True"
+      ]
+    },
+    {
+      "id": "decision_default_myRule_1_pmetdec",
+      "category": "Default Path Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'Previously Met Decision' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: Previously Met Decision",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "decision_myRule_1_pmetdec_myRule_1_pmetrule",
+      "category": "Decision Logic Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', explain the decision 'Previously Met Decision' - specifically when does the 'Previously Met - Prev' path execute?",
+      "context": "Conditions: myVariable_old.Amount GreaterThanOrEqualTo 100000.0 and myVariable_old.IsWon EqualTo True",
+      "expected_analysis": [
+        "myVariable_old.Amount GreaterThanOrEqualTo 100000.0",
+        "myVariable_old.IsWon EqualTo True"
+      ]
+    },
+    {
+      "id": "decision_threshold_myRule_1_pmetdec_0",
+      "category": "Decision Thresholds",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "What is the threshold value for myVariable_old.Amount in the 'Opportunity Won Account Priority Actions' flow? What happens when the value is exactly at, above, or below this threshold?",
+      "context": "Threshold condition: myVariable_old.Amount GreaterThanOrEqualTo 100000.0",
+      "expected_analysis": [
+        "Threshold: 100000.0",
+        "Operator: GreaterThanOrEqualTo"
+      ]
+    },
+    {
+      "id": "decision_default_myRule_1_pmetdec",
+      "category": "Default Path Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'Previously Met Decision' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: Previously Met Decision",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "decision_myRule_3_pmetdec_myRule_3_pmetnullrule",
+      "category": "Decision Logic Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', explain the decision 'Previously Met Decision' - specifically when does the 'Previously Met - Null' path execute?",
+      "context": "Conditions: myVariable_old IsNull True",
+      "expected_analysis": [
+        "myVariable_old IsNull True"
+      ]
+    },
+    {
+      "id": "decision_null_myRule_3_pmetdec_0",
+      "category": "Null Value Handling",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "How does 'Opportunity Won Account Priority Actions' handle null values for myVariable_old? What path does the flow take when this is null vs not null?",
+      "context": "Null check: myVariable_old IsNull = True",
+      "expected_analysis": [
+        "Checks if myVariable_old is null",
+        "Expected null state: True"
+      ]
+    },
+    {
+      "id": "decision_default_myRule_3_pmetdec",
+      "category": "Default Path Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'Previously Met Decision' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: Previously Met Decision",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "decision_myRule_3_pmetdec_myRule_3_pmetrule",
+      "category": "Decision Logic Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', explain the decision 'Previously Met Decision' - specifically when does the 'Previously Met - Prev' path execute?",
+      "context": "Conditions: myVariable_old.Account.CustomerPriority__c EqualTo High and myVariable_old.IsWon EqualTo True",
+      "expected_analysis": [
+        "myVariable_old.Account.CustomerPriority__c EqualTo High",
+        "myVariable_old.IsWon EqualTo True"
+      ]
+    },
+    {
+      "id": "decision_default_myRule_3_pmetdec",
+      "category": "Default Path Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'Previously Met Decision' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: Previously Met Decision",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "update_myRule_1_A1",
+      "category": "Record Update Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "In 'Opportunity Won Account Priority Actions', what changes does 'Acc to HIGH Priority' make to the record? Which fields are modified?",
+      "context": "Object: Account, Updates: 1 fields",
+      "expected_analysis": [
+        "CustomerPriority__c -> High"
+      ]
+    },
+    {
+      "id": "variables_input",
+      "category": "Input Variable Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "What input variables does 'Opportunity Won Account Priority Actions' accept? What data must be passed to this flow for it to execute correctly?",
+      "context": "Input variables: ['myVariable_current', 'myVariable_old', 'RecursiveCountVariable']",
+      "expected_analysis": [
+        "myVariable_current: Opportunity",
+        "myVariable_old: Opportunity",
+        "RecursiveCountVariable: None"
+      ]
+    },
+    {
+      "id": "variables_output",
+      "category": "Output Variable Analysis",
+      "flow": "Opportunity_Won_Account_Priority_Actions",
+      "query": "What output does 'Opportunity Won Account Priority Actions' return? What data can be accessed after this flow completes?",
+      "context": "Output variables: ['myVariable_current']",
+      "expected_analysis": [
+        "myVariable_current: Opportunity"
+      ]
+    },
+    {
+      "id": "trigger_1",
+      "category": "Flow Trigger Conditions",
+      "flow": "Case_Closed_chatter",
+      "query": "When does the 'Case Closed chatter' flow get triggered? Specifically, what condition on Status must be met?",
+      "context": "Trigger: Status EqualTo Closed",
+      "expected_analysis": [
+        "Field: Status",
+        "Operator: EqualTo",
+        "Value: Closed"
+      ]
+    },
+    {
+      "id": "trigger_edge_1",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "Case_Closed_chatter",
+      "query": "What happens in 'Case Closed chatter' if Status is NOT equal to 'Closed'? Will the flow execute?",
+      "context": "Testing trigger condition: Status EqualTo Closed",
+      "expected_analysis": [
+        "Flow will NOT execute",
+        "Requires Status = Closed"
+      ]
+    },
+    {
+      "id": "decision_Interested_or_not_Interested_Outcome",
+      "category": "Decision Logic Analysis",
+      "flow": "Survey_Form",
+      "query": "In 'Survey Form', explain the decision 'Interested or not' - specifically when does the 'Interested Outcome' path execute?",
+      "context": "Conditions: Are_you_interested_in_taking_survey EqualTo ${Yes}",
+      "expected_analysis": [
+        "Are_you_interested_in_taking_survey EqualTo ${Yes}"
+      ]
+    },
+    {
+      "id": "decision_default_Interested_or_not",
+      "category": "Default Path Analysis",
+      "flow": "Survey_Form",
+      "query": "In 'Survey Form', what is the default outcome if NONE of the conditions in 'Interested or not' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: Interested or not",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "create_Create_Survey_Records",
+      "category": "Record Creation Analysis",
+      "flow": "Survey_Form",
+      "query": "In 'Survey Form', what Survey__c record is created by 'Create Survey Records'? What fields are set and from where do they get their values?",
+      "context": "Object: Survey__c, Fields: Additional_Comment__c, Name__c, Rating__c",
+      "expected_analysis": [
+        "Additional_Comment__c = ${Any_Additional_Comment}",
+        "Name__c = ${Enter_Your_Name}",
+        "Rating__c = ${How_will_you_rate_our_website}"
+      ]
+    },
+    {
+      "id": "screen_Interested_in_Survey_Check_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Survey_Form",
+      "query": "What user inputs are collected on the 'Interested in Survey Check' screen in 'Survey Form'? What types of data are expected?",
+      "context": "Screen fields: ['Are_you_interested_in_taking_survey']",
+      "expected_analysis": [
+        "Are_you_interested_in_taking_survey: String"
+      ]
+    },
+    {
+      "id": "screen_Not_Interested_Scren_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Survey_Form",
+      "query": "What user inputs are collected on the 'Not Interested Scren' screen in 'Survey Form'? What types of data are expected?",
+      "context": "Screen fields: ['Thank_you_message']",
+      "expected_analysis": [
+        "Thank_you_message: None"
+      ]
+    },
+    {
+      "id": "screen_Survey_Question_Screen_validation",
+      "category": "Screen Validation Analysis",
+      "flow": "Survey_Form",
+      "query": "In 'Survey Form', what are the required fields on the 'Survey Question Screen' screen? What validation happens?",
+      "context": "Screen: Survey Question Screen, Required fields: 1",
+      "expected_analysis": [
+        "Enter_Your_Name (required)"
+      ]
+    },
+    {
+      "id": "screen_Survey_Question_Screen_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Survey_Form",
+      "query": "What user inputs are collected on the 'Survey Question Screen' screen in 'Survey Form'? What types of data are expected?",
+      "context": "Screen fields: ['Enter_Your_Name', 'How_will_you_rate_our_website', 'Any_Additional_Comment']",
+      "expected_analysis": [
+        "Enter_Your_Name: String",
+        "How_will_you_rate_our_website: String",
+        "Any_Additional_Comment: None"
+      ]
+    },
+    {
+      "id": "trigger_1",
+      "category": "Flow Trigger Conditions",
+      "flow": "Notify_deal_closed",
+      "query": "When does the 'Notify deal closed' flow get triggered? Specifically, what condition on StageName must be met?",
+      "context": "Trigger: StageName EqualTo Closed Won",
+      "expected_analysis": [
+        "Field: StageName",
+        "Operator: EqualTo",
+        "Value: Closed Won"
+      ]
+    },
+    {
+      "id": "trigger_edge_1",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "Notify_deal_closed",
+      "query": "What happens in 'Notify deal closed' if StageName is NOT equal to 'Closed Won'? Will the flow execute?",
+      "context": "Testing trigger condition: StageName EqualTo Closed Won",
+      "expected_analysis": [
+        "Flow will NOT execute",
+        "Requires StageName = Closed Won"
+      ]
+    },
+    {
+      "id": "create_CRN_Merage",
+      "category": "Record Creation Analysis",
+      "flow": "Account_MerageDemerage_Event_Flow",
+      "query": "In 'Account MerageDemerage Event Flow', what CRN_Merage__c record is created by 'CRN Merage'? What fields are set and from where do they get their values?",
+      "context": "Object: CRN_Merage__c, Fields: Status_Reason__c, Status__c, UCIC__c, srcSystemId__c",
+      "expected_analysis": [
+        "Status_Reason__c = ${$Record.Status_Reason__c}",
+        "Status__c = ${$Record.Status__c}",
+        "UCIC__c = ${$Record.UCIC__c}",
+        "srcSystemId__c = ${$Record.srcSystemId__c}"
+      ]
+    },
+    {
+      "id": "trigger_1",
+      "category": "Flow Trigger Conditions",
+      "flow": "offer_to_lead",
+      "query": "When does the 'offer_to_lead' flow get triggered? Specifically, what condition on Product__c must be met?",
+      "context": "Trigger: Product__c EqualTo Credit Card",
+      "expected_analysis": [
+        "Field: Product__c",
+        "Operator: EqualTo",
+        "Value: Credit Card"
+      ]
+    },
+    {
+      "id": "trigger_edge_1",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "offer_to_lead",
+      "query": "What happens in 'offer_to_lead' if Product__c is EqualTo to 'Credit Card'? Will the flow execute?",
+      "context": "Testing trigger condition: Product__c EqualTo Credit Card",
+      "expected_analysis": [
+        "Flow will execute",
+        "Requires Product__c = Credit Card"
+      ]
+    },
+    {
+      "id": "trigger_2",
+      "category": "Flow Trigger Conditions",
+      "flow": "offer_to_lead",
+      "query": "When does the 'offer_to_lead' flow get triggered? Specifically, what condition on Offer_Name__c must be met?",
+      "context": "Trigger: Offer_Name__c EqualTo Credit Card",
+      "expected_analysis": [
+        "Field: Offer_Name__c",
+        "Operator: EqualTo",
+        "Value: Credit Card"
+      ]
+    },
+    {
+      "id": "trigger_edge_2",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "offer_to_lead",
+      "query": "What happens in 'offer_to_lead' if Offer_Name__c is EqualTo to 'Credit Card'? Will the flow execute?",
+      "context": "Testing trigger condition: Offer_Name__c EqualTo Credit Card",
+      "expected_analysis": [
+        "Flow will execute",
+        "Requires Offer_Name__c = Credit Card"
+      ]
+    },
+    {
+      "id": "trigger_3",
+      "category": "Flow Trigger Conditions",
+      "flow": "offer_to_lead",
+      "query": "When does the 'offer_to_lead' flow get triggered? Specifically, what condition on Product_Category__c must be met?",
+      "context": "Trigger: Product_Category__c EqualTo Credit Card",
+      "expected_analysis": [
+        "Field: Product_Category__c",
+        "Operator: EqualTo",
+        "Value: Credit Card"
+      ]
+    },
+    {
+      "id": "trigger_edge_3",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "offer_to_lead",
+      "query": "What happens in 'offer_to_lead' if Product_Category__c is NOT equal to 'Credit Card'? Will the flow execute?",
+      "context": "Testing trigger condition: Product_Category__c EqualTo Credit Card",
+      "expected_analysis": [
+        "Flow will NOT execute",
+        "Requires Product_Category__c = Credit Card"
+      ]
+    },
+    {
+      "id": "trigger_4",
+      "category": "Flow Trigger Conditions",
+      "flow": "offer_to_lead",
+      "query": "When does the 'offer_to_lead' flow get triggered? Specifically, what condition on CustomerID__c must be met?",
+      "context": "Trigger: CustomerID__c NotEqualTo ",
+      "expected_analysis": [
+        "Field: CustomerID__c",
+        "Operator: NotEqualTo",
+        "Value: "
+      ]
+    },
+    {
+      "id": "trigger_edge_4",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "offer_to_lead",
+      "query": "What happens in 'offer_to_lead' if CustomerID__c is NOT equal to ''? Will the flow execute?",
+      "context": "Testing trigger condition: CustomerID__c NotEqualTo ",
+      "expected_analysis": [
+        "Flow will NOT execute",
+        "Requires CustomerID__c = "
+      ]
+    },
+    {
+      "id": "trigger_5",
+      "category": "Flow Trigger Conditions",
+      "flow": "offer_to_lead",
+      "query": "When does the 'offer_to_lead' flow get triggered? Specifically, what condition on Account_Number__c must be met?",
+      "context": "Trigger: Account_Number__c NotEqualTo ",
+      "expected_analysis": [
+        "Field: Account_Number__c",
+        "Operator: NotEqualTo",
+        "Value: "
+      ]
+    },
+    {
+      "id": "trigger_edge_5",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "offer_to_lead",
+      "query": "What happens in 'offer_to_lead' if Account_Number__c is NOT equal to ''? Will the flow execute?",
+      "context": "Testing trigger condition: Account_Number__c NotEqualTo ",
+      "expected_analysis": [
+        "Flow will NOT execute",
+        "Requires Account_Number__c = "
+      ]
+    },
+    {
+      "id": "trigger_6",
+      "category": "Flow Trigger Conditions",
+      "flow": "offer_to_lead",
+      "query": "When does the 'offer_to_lead' flow get triggered? Specifically, what condition on External_Offer_ID__c must be met?",
+      "context": "Trigger: External_Offer_ID__c NotEqualTo ",
+      "expected_analysis": [
+        "Field: External_Offer_ID__c",
+        "Operator: NotEqualTo",
+        "Value: "
+      ]
+    },
+    {
+      "id": "trigger_edge_6",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "offer_to_lead",
+      "query": "What happens in 'offer_to_lead' if External_Offer_ID__c is NOT equal to ''? Will the flow execute?",
+      "context": "Testing trigger condition: External_Offer_ID__c NotEqualTo ",
+      "expected_analysis": [
+        "Flow will NOT execute",
+        "Requires External_Offer_ID__c = "
+      ]
+    },
+    {
+      "id": "create_offer_to_lead_record",
+      "category": "Record Creation Analysis",
+      "flow": "offer_to_lead",
+      "query": "In 'offer_to_lead', what Lead record is created by 'offer_to_lead_record'? What fields are set and from where do they get their values?",
+      "context": "Object: Lead, Fields: Campaign__c, City, Company, Company_Name__c, Customer_Category__c, Eligibility_for_verif_waiver_or_not__c, Email, FirstName, LastName, Lead_Source__c, Lead_Sub_Status__c, Mobile_No__c, Offer_ID__c, Phone, PostalCode, Product__c, Related_Account__c, Segment_Type__c, State, Status",
+      "expected_analysis": [
+        "Campaign__c = ${$Record.Campaign__c}",
+        "City = ${$Record.Office_City__c}",
+        "Company = IDFC",
+        "Company_Name__c = IDFC",
+        "Customer_Category__c = Individual",
+        "Eligibility_for_verif_waiver_or_not__c = ${$Record.Eligibility_for_verif_waiver_or_not__c}",
+        "Email = ${$Record.CustomerID__r.Email__c}",
+        "FirstName = ${$Record.CustomerID__r.Name}",
+        "LastName = Yadav",
+        "Lead_Source__c = Internet",
+        "Lead_Sub_Status__c = New",
+        "Mobile_No__c = ${$Record.Mobile_no__c}",
+        "Offer_ID__c = ${$Record.Name}",
+        "Phone = ${$Record.Mobile_no__c}",
+        "PostalCode = ${$Record.Office_PIN_Code__c}",
+        "Product__c = ${$Record.Product__c}",
+        "Related_Account__c = ${$Record.CustomerID__c}",
+        "Segment_Type__c = ${$Record.Product_Category__c}",
+        "State = ${$Record.Office_State__c}",
+        "Status = New"
+      ]
+    },
+    {
+      "id": "decision_To_Check_offer_Active_to_check_offer_status",
+      "category": "Decision Logic Analysis",
+      "flow": "Offertoleadconversion",
+      "query": "In 'Offertoleadconversion', explain the decision 'To Check offer Active' - specifically when does the 'to check offer status' path execute?",
+      "context": "Conditions: offer_Record.Offer_Status__c EqualTo Active",
+      "expected_analysis": [
+        "offer_Record.Offer_Status__c EqualTo Active"
+      ]
+    },
+    {
+      "id": "decision_default_To_Check_offer_Active",
+      "category": "Default Path Analysis",
+      "flow": "Offertoleadconversion",
+      "query": "In 'Offertoleadconversion', what is the default outcome if NONE of the conditions in 'To Check offer Active' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: To Check offer Active",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "create_offer_to_lead_creation",
+      "category": "Record Creation Analysis",
+      "flow": "Offertoleadconversion",
+      "query": "In 'Offertoleadconversion', what Lead record is created by 'offer to lead creation'? What fields are set and from where do they get their values?",
+      "context": "Object: Lead, Fields: Campaign__c, City, Company, Customer_Category__c, Eligibility_for_verif_waiver_or_not__c, Email, FirstName, LastName, Lead_Source__c, Lead_Sub_Status__c, Offer_ID__c, PostalCode, Product__c, Related_Account__c, Segment_Type__c, State, Status, isNew__c",
+      "expected_analysis": [
+        "Campaign__c = ${offer_Record.Campaign__c}",
+        "City = ${offer_Record.Office_City__c}",
+        "Company = IDFC",
+        "Customer_Category__c = Individual",
+        "Eligibility_for_verif_waiver_or_not__c = ${offer_Record.Eligibility_for_verif_waiver_or_not__c}",
+        "Email = ${offer_Record.Email__c}",
+        "FirstName = ${offer_Record.CustomerID__r.Name}",
+        "LastName = Yadav",
+        "Lead_Source__c = Internet",
+        "Lead_Sub_Status__c = New",
+        "Offer_ID__c = ${offer_Record.Name}",
+        "PostalCode = ${offer_Record.Office_PIN_Code__c}",
+        "Product__c = ${offer_Record.Product__c}",
+        "Related_Account__c = ${offer_Record.CustomerID__c}",
+        "Segment_Type__c = ${offer_Record.Product__c}",
+        "State = ${offer_Record.Office_State__c}",
+        "Status = New",
+        "isNew__c = True"
+      ]
+    },
+    {
+      "id": "screen_Offer_Cannot_Convert_inputs",
+      "category": "Screen Input Analysis",
+      "flow": "Offertoleadconversion",
+      "query": "What user inputs are collected on the 'Offer Cannot Convert' screen in 'Offertoleadconversion'? What types of data are expected?",
+      "context": "Screen fields: ['Error_Text']",
+      "expected_analysis": [
+        "Error_Text: None"
+      ]
+    },
+    {
+      "id": "trigger_1",
+      "category": "Flow Trigger Conditions",
+      "flow": "Lead_Communication_Flow",
+      "query": "When does the 'Lead Communication Flow' flow get triggered? Specifically, what condition on Product__c must be met?",
+      "context": "Trigger: Product__c EqualTo Credit Card",
+      "expected_analysis": [
+        "Field: Product__c",
+        "Operator: EqualTo",
+        "Value: Credit Card"
+      ]
+    },
+    {
+      "id": "trigger_edge_1",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "Lead_Communication_Flow",
+      "query": "What happens in 'Lead Communication Flow' if Product__c is NOT equal to 'Credit Card'? Will the flow execute?",
+      "context": "Testing trigger condition: Product__c EqualTo Credit Card",
+      "expected_analysis": [
+        "Flow will NOT execute",
+        "Requires Product__c = Credit Card"
+      ]
+    },
+    {
+      "id": "trigger_2",
+      "category": "Flow Trigger Conditions",
+      "flow": "Lead_Communication_Flow",
+      "query": "When does the 'Lead Communication Flow' flow get triggered? Specifically, what condition on Email must be met?",
+      "context": "Trigger: Email IsNull False",
+      "expected_analysis": [
+        "Field: Email",
+        "Operator: IsNull",
+        "Value: False"
+      ]
+    },
+    {
+      "id": "trigger_edge_2",
+      "category": "Flow Trigger Edge Cases",
+      "flow": "Lead_Communication_Flow",
+      "query": "What happens in 'Lead Communication Flow' if Email is NOT equal to 'False'? Will the flow execute?",
+      "context": "Testing trigger condition: Email IsNull False",
+      "expected_analysis": [
+        "Flow will NOT execute",
+        "Requires Email = False"
+      ]
+    },
+    {
+      "id": "decision_To_check_Creation_and_Closure_Lead_Is_Lead_Created",
+      "category": "Decision Logic Analysis",
+      "flow": "Lead_Communication_Flow",
+      "query": "In 'Lead Communication Flow', explain the decision 'To check Creation and Closure Lead' - specifically when does the 'Is Lead Created' path execute?",
+      "context": "Conditions: $Record.isNew__c EqualTo True",
+      "expected_analysis": [
+        "$Record.isNew__c EqualTo True"
+      ]
+    },
+    {
+      "id": "decision_default_To_check_Creation_and_Closure_Lead",
+      "category": "Default Path Analysis",
+      "flow": "Lead_Communication_Flow",
+      "query": "In 'Lead Communication Flow', what is the default outcome if NONE of the conditions in 'To check Creation and Closure Lead' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: To check Creation and Closure Lead",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "decision_To_check_Creation_and_Closure_Lead_Is_Lead_Closed",
+      "category": "Decision Logic Analysis",
+      "flow": "Lead_Communication_Flow",
+      "query": "In 'Lead Communication Flow', explain the decision 'To check Creation and Closure Lead' - specifically when does the 'Is Lead Closed' path execute?",
+      "context": "Conditions: $Record.isNew__c EqualTo False",
+      "expected_analysis": [
+        "$Record.isNew__c EqualTo False"
+      ]
+    },
+    {
+      "id": "decision_default_To_check_Creation_and_Closure_Lead",
+      "category": "Default Path Analysis",
+      "flow": "Lead_Communication_Flow",
+      "query": "In 'Lead Communication Flow', what is the default outcome if NONE of the conditions in 'To check Creation and Closure Lead' are met? What path does the flow take?",
+      "context": "Analyzing default connector for decision: To check Creation and Closure Lead",
+      "expected_analysis": [
+        "Default path behavior",
+        "Fallback logic"
+      ]
+    },
+    {
+      "id": "create_LeadEmailTaskCreation",
+      "category": "Record Creation Analysis",
+      "flow": "Lead_Communication_Flow",
+      "query": "In 'Lead Communication Flow', what Task record is created by 'LeadEmailTaskCreation'? What fields are set and from where do they get their values?",
+      "context": "Object: Task, Fields: ActivityDate, CallType, Send_Email__c, Status, Subject, TaskSubtype",
+      "expected_analysis": [
+        "ActivityDate = ${$Flow.CurrentDate}",
+        "CallType = Internal",
+        "Send_Email__c = True",
+        "Status = Completed",
+        "Subject = Email",
+        "TaskSubtype = Email"
+      ]
+    },
+    {
+      "id": "update_Case_Priority",
+      "category": "Record Update Analysis",
+      "flow": "Schedule_Flow_Example",
+      "query": "In 'Schedule Flow Example', what changes does 'Case Priority' make to the record? Which fields are modified?",
+      "context": "Object: Case, Updates: 2 fields",
+      "expected_analysis": [
+        "Description -> Priority Updated by Schedule Flow",
+        "Priority -> High"
+      ]
+    }
+  ]
+}

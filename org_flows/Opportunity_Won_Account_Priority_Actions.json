@@ -1,0 +1,1486 @@
+{
+  "Id": "301J2000000btyIIAQ",
+  "FullName": "Opportunity_Won_Account_Priority_Actions",
+  "MasterLabel": "Opportunity Won Account Priority Actions",
+  "Metadata": {
+    "actionCalls": [
+      {
+        "actionName": "chatterPost",
+        "actionType": "chatterPost",
+        "connector": null,
+        "dataTypeMappings": [],
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "flowTransactionModel": "CurrentTransaction",
+        "inputParameters": [
+          {
+            "name": "text",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "{!myVariable_current.Owner.FirstName} has closed a {!myVariable_current.Amount} deal with {!myVariable_current.Account.Name}"
+            }
+          },
+          {
+            "name": "type",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "USER"
+            }
+          },
+          {
+            "name": "subjectNameOrId",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "0055h00000AVsVCAA1"
+            }
+          }
+        ],
+        "label": "Post to Sales Group",
+        "locationX": 300,
+        "locationY": 200,
+        "name": "myRule_3_A1",
+        "nameSegment": "chatterPost",
+        "outputConfigParams": [],
+        "outputParameters": [],
+        "processMetadataValues": [
+          {
+            "name": "postTarget",
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Saurabh Yadav"
+            }
+          },
+          {
+            "name": "postTargetUserType",
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "USER"
+            }
+          },
+          {
+            "name": "textJson",
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "{\"mentions\":[],\"message\":\"{![Opportunity].Owner.FirstName} has closed a {![Opportunity].Amount} deal with {![Opportunity].Account.Name}\"}"
+            }
+          }
+        ],
+        "storeOutputAutomatically": null,
+        "versionSegment": null
+      }
+    ],
+    "apexPluginCalls": [],
+    "apiVersion": 61.0,
+    "assignments": [],
+    "choices": [],
+    "collectionProcessors": [],
+    "constants": [],
+    "customErrors": [],
+    "decisions": [
+      {
+        "attributes": null,
+        "defaultConnector": {
+          "isGoTo": null,
+          "processMetadataValues": [],
+          "targetReference": "myDecision2"
+        },
+        "defaultConnectorLabel": "default",
+        "description": null,
+        "elementSubtype": null,
+        "label": "myDecision",
+        "locationX": 50,
+        "locationY": 0,
+        "name": "myDecision",
+        "processMetadataValues": [
+          {
+            "name": "index",
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": 0.0,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          }
+        ],
+        "rules": [
+          {
+            "attributes": null,
+            "conditionLogic": "and",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_current.Amount",
+                "operator": "GreaterThanOrEqualTo",
+                "processMetadataValues": [
+                  {
+                    "name": "inputDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Currency"
+                    }
+                  },
+                  {
+                    "name": "leftHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Currency"
+                    }
+                  },
+                  {
+                    "name": "operatorDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Currency"
+                    }
+                  },
+                  {
+                    "name": "rightHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Currency"
+                    }
+                  }
+                ],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": 100000.0,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              },
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_current.IsWon",
+                "operator": "EqualTo",
+                "processMetadataValues": [
+                  {
+                    "name": "inputDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "leftHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "operatorDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "rightHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  }
+                ],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": true,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "connector": {
+              "isGoTo": null,
+              "processMetadataValues": [],
+              "targetReference": "myRule_1_pmetdec"
+            },
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": ">1Lakh make high Priority",
+            "name": "myRule_1",
+            "processMetadataValues": []
+          }
+        ]
+      },
+      {
+        "attributes": null,
+        "defaultConnector": null,
+        "defaultConnectorLabel": "default",
+        "description": null,
+        "elementSubtype": null,
+        "label": "myDecision2",
+        "locationX": 50,
+        "locationY": 0,
+        "name": "myDecision2",
+        "processMetadataValues": [
+          {
+            "name": "index",
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": 1.0,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          }
+        ],
+        "rules": [
+          {
+            "attributes": null,
+            "conditionLogic": "and",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_current.Account.CustomerPriority__c",
+                "operator": "EqualTo",
+                "processMetadataValues": [
+                  {
+                    "name": "inputDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Picklist"
+                    }
+                  },
+                  {
+                    "name": "leftHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Picklist"
+                    }
+                  },
+                  {
+                    "name": "operatorDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "String"
+                    }
+                  },
+                  {
+                    "name": "rightHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Picklist"
+                    }
+                  }
+                ],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": "High"
+                }
+              },
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_current.IsWon",
+                "operator": "EqualTo",
+                "processMetadataValues": [
+                  {
+                    "name": "inputDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "leftHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "operatorDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "rightHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  }
+                ],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": true,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "connector": {
+              "isGoTo": null,
+              "processMetadataValues": [],
+              "targetReference": "myRule_3_pmetdec"
+            },
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": "Won & Account Priority = Medium",
+            "name": "myRule_3",
+            "processMetadataValues": []
+          }
+        ]
+      },
+      {
+        "attributes": null,
+        "defaultConnector": {
+          "isGoTo": null,
+          "processMetadataValues": [],
+          "targetReference": "myRule_1_A1"
+        },
+        "defaultConnectorLabel": "Not Previously Met",
+        "description": null,
+        "elementSubtype": null,
+        "label": "Previously Met Decision",
+        "locationX": 100,
+        "locationY": 100,
+        "name": "myRule_1_pmetdec",
+        "processMetadataValues": [],
+        "rules": [
+          {
+            "attributes": null,
+            "conditionLogic": "or",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_old",
+                "operator": "IsNull",
+                "processMetadataValues": [],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": true,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "connector": {
+              "isGoTo": null,
+              "processMetadataValues": [],
+              "targetReference": "myRule_1_A1"
+            },
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": "Previously Met - Null",
+            "name": "myRule_1_pmetnullrule",
+            "processMetadataValues": []
+          },
+          {
+            "attributes": null,
+            "conditionLogic": "and",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_old.Amount",
+                "operator": "GreaterThanOrEqualTo",
+                "processMetadataValues": [
+                  {
+                    "name": "inputDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Currency"
+                    }
+                  },
+                  {
+                    "name": "leftHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Currency"
+                    }
+                  },
+                  {
+                    "name": "operatorDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Currency"
+                    }
+                  },
+                  {
+                    "name": "rightHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Currency"
+                    }
+                  }
+                ],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": 100000.0,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              },
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_old.IsWon",
+                "operator": "EqualTo",
+                "processMetadataValues": [
+                  {
+                    "name": "inputDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "leftHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "operatorDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "rightHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  }
+                ],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": true,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "connector": {
+              "isGoTo": null,
+              "processMetadataValues": [],
+              "targetReference": "myDecision2"
+            },
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": "Previously Met - Prev",
+            "name": "myRule_1_pmetrule",
+            "processMetadataValues": []
+          }
+        ]
+      },
+      {
+        "attributes": null,
+        "defaultConnector": {
+          "isGoTo": null,
+          "processMetadataValues": [],
+          "targetReference": "myRule_3_A1"
+        },
+        "defaultConnectorLabel": "Not Previously Met",
+        "description": null,
+        "elementSubtype": null,
+        "label": "Previously Met Decision",
+        "locationX": 300,
+        "locationY": 100,
+        "name": "myRule_3_pmetdec",
+        "processMetadataValues": [],
+        "rules": [
+          {
+            "attributes": null,
+            "conditionLogic": "or",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_old",
+                "operator": "IsNull",
+                "processMetadataValues": [],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": true,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "connector": {
+              "isGoTo": null,
+              "processMetadataValues": [],
+              "targetReference": "myRule_3_A1"
+            },
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": "Previously Met - Null",
+            "name": "myRule_3_pmetnullrule",
+            "processMetadataValues": []
+          },
+          {
+            "attributes": null,
+            "conditionLogic": "and",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_old.Account.CustomerPriority__c",
+                "operator": "EqualTo",
+                "processMetadataValues": [
+                  {
+                    "name": "inputDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Picklist"
+                    }
+                  },
+                  {
+                    "name": "leftHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Picklist"
+                    }
+                  },
+                  {
+                    "name": "operatorDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "String"
+                    }
+                  },
+                  {
+                    "name": "rightHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Picklist"
+                    }
+                  }
+                ],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": "High"
+                }
+              },
+              {
+                "conditionType": null,
+                "leftValueReference": "myVariable_old.IsWon",
+                "operator": "EqualTo",
+                "processMetadataValues": [
+                  {
+                    "name": "inputDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "leftHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "operatorDataType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  },
+                  {
+                    "name": "rightHandSideType",
+                    "value": {
+                      "apexValue": null,
+                      "booleanValue": null,
+                      "dateTimeValue": null,
+                      "dateValue": null,
+                      "elementReference": null,
+                      "formulaDataType": null,
+                      "formulaExpression": null,
+                      "numberValue": null,
+                      "setupReference": null,
+                      "setupReferenceType": null,
+                      "sobjectValue": null,
+                      "stringValue": "Boolean"
+                    }
+                  }
+                ],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": true,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "connector": null,
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": "Previously Met - Prev",
+            "name": "myRule_3_pmetrule",
+            "processMetadataValues": []
+          }
+        ]
+      }
+    ],
+    "description": null,
+    "dynamicChoiceSets": [],
+    "environments": null,
+    "exitRules": [],
+    "formulas": [],
+    "interviewLabel": "Opportunity_Won_Account_Priority_Actions-1_InterviewLabel",
+    "isAdditionalPermissionRequiredToRun": null,
+    "isOverridable": null,
+    "isTemplate": null,
+    "label": "Opportunity Won Account Priority Actions",
+    "loops": [],
+    "migratedFromWorkflowRuleName": null,
+    "orchestratedStages": [],
+    "overriddenFlow": null,
+    "processMetadataValues": [
+      {
+        "name": "ObjectType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "Opportunity"
+        }
+      },
+      {
+        "name": "ObjectVariable",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": "myVariable_current",
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": null
+        }
+      },
+      {
+        "name": "OldObjectVariable",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": "myVariable_old",
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": null
+        }
+      },
+      {
+        "name": "RecursiveCountVariable",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": "RecursiveCountVariable",
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": null
+        }
+      },
+      {
+        "name": "TriggerType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "onAllChanges"
+        }
+      }
+    ],
+    "processType": "Workflow",
+    "recordCreates": [],
+    "recordDeletes": [],
+    "recordLookups": [],
+    "recordRollbacks": [],
+    "recordUpdates": [
+      {
+        "connector": {
+          "isGoTo": null,
+          "processMetadataValues": [],
+          "targetReference": "myDecision2"
+        },
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "filterLogic": "and",
+        "filters": [
+          {
+            "field": "Id",
+            "operator": "EqualTo",
+            "processMetadataValues": [
+              {
+                "name": "implicit",
+                "value": {
+                  "apexValue": null,
+                  "booleanValue": true,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "myVariable_current.AccountId",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          }
+        ],
+        "inputAssignments": [
+          {
+            "field": "CustomerPriority__c",
+            "processMetadataValues": [
+              {
+                "name": "dataType",
+                "value": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": "Picklist"
+                }
+              },
+              {
+                "name": "isRequired",
+                "value": {
+                  "apexValue": null,
+                  "booleanValue": false,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              },
+              {
+                "name": "leftHandSideLabel",
+                "value": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": "Customer Priority"
+                }
+              },
+              {
+                "name": "leftHandSideReferenceTo",
+                "value": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": ""
+                }
+              },
+              {
+                "name": "rightHandSideType",
+                "value": {
+                  "apexValue": null,
+                  "booleanValue": null,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": "Picklist"
+                }
+              }
+            ],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "High"
+            }
+          }
+        ],
+        "inputReference": null,
+        "label": "Acc to HIGH Priority",
+        "locationX": 100,
+        "locationY": 200,
+        "name": "myRule_1_A1",
+        "object": "Account",
+        "processMetadataValues": [
+          {
+            "name": "evaluationType",
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "always"
+            }
+          },
+          {
+            "name": "extraTypeInfo",
+            "value": null
+          },
+          {
+            "name": "isChildRelationship",
+            "value": {
+              "apexValue": null,
+              "booleanValue": false,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "name": "reference",
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "[Opportunity].Account ID"
+            }
+          },
+          {
+            "name": "referenceTargetField",
+            "value": null
+          }
+        ]
+      }
+    ],
+    "runInMode": null,
+    "screens": [],
+    "sourceTemplate": null,
+    "start": null,
+    "startElementReference": "myDecision",
+    "status": "Active",
+    "steps": [],
+    "subflows": [],
+    "textTemplates": [],
+    "timeZoneSidKey": null,
+    "transforms": [],
+    "triggerOrder": null,
+    "urls": null,
+    "variables": [
+      {
+        "apexClass": null,
+        "dataType": "SObject",
+        "description": null,
+        "isCollection": false,
+        "isInput": true,
+        "isOutput": true,
+        "name": "myVariable_current",
+        "objectType": "Opportunity",
+        "processMetadataValues": [],
+        "scale": null,
+        "value": null
+      },
+      {
+        "apexClass": null,
+        "dataType": "SObject",
+        "description": null,
+        "isCollection": false,
+        "isInput": true,
+        "isOutput": false,
+        "name": "myVariable_old",
+        "objectType": "Opportunity",
+        "processMetadataValues": [],
+        "scale": null,
+        "value": null
+      },
+      {
+        "apexClass": null,
+        "dataType": "Number",
+        "description": null,
+        "isCollection": false,
+        "isInput": true,
+        "isOutput": false,
+        "name": "RecursiveCountVariable",
+        "objectType": null,
+        "processMetadataValues": [],
+        "scale": 2,
+        "value": null
+      }
+    ],
+    "waits": []
+  },
+  "ProcessType": "Workflow",
+  "TriggerType": null,
+  "Status": "Active",
+  "ApiVersion": 61.0,
+  "VersionNumber": 1,
+  "Description": null
+}

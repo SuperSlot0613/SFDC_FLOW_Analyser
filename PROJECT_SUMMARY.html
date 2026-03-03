@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow AI Implementation - Dynamic Analysis Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #0ea5e9;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+        }
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-links a:hover { color: var(--light); }
+        .hero {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #c7d2fe 50%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1rem;
+            color: var(--gray-400);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .badge {
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.3); }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .stats-section {
+            padding: 2rem;
+            background: rgba(30, 41, 59, 0.5);
+        }
+        .stats-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+        .stat-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .stat-icon {
+            width: 45px; height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-size: 1.1rem;
+        }
+        .stat-icon.flows { background: var(--gradient-1); }
+        .stat-icon.scenarios { background: var(--gradient-3); }
+        .stat-icon.decisions { background: var(--gradient-4); }
+        .stat-icon.categories { background: var(--gradient-5); }
+        .stat-icon.triggers { background: var(--gradient-2); }
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { color: var(--gray-400); font-size: 0.75rem; }
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-header h2 i { color: var(--primary); }
+        .controls-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+            max-width: 350px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+        .search-box input::placeholder { color: var(--gray-500); }
+        .search-box i { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--gray-500); }
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+        .flow-accordion { margin-bottom: 1rem; }
+        .flow-header {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .flow-header:hover {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        .flow-header.active {
+            border-radius: 14px 14px 0 0;
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+        .flow-info { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .flow-name {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .flow-type-badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .flow-type-badge.Flow { background: rgba(99, 102, 241, 0.3); color: #a5b4fc; }
+        .flow-type-badge.AutoLaunchedFlow { background: rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+        .flow-type-badge.Workflow { background: rgba(245, 158, 11, 0.3); color: #fcd34d; }
+        .flow-stats-mini { display: flex; gap: 1rem; }
+        .flow-stat-mini {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            color: var(--gray-400);
+        }
+        .flow-stat-mini i { color: var(--primary-light); }
+        .flow-stat-mini span { font-weight: 600; color: var(--light); }
+        .flow-toggle {
+            font-size: 1rem;
+            color: var(--gray-500);
+            transition: transform 0.3s;
+        }
+        .flow-header.active .flow-toggle { transform: rotate(180deg); }
+        .flow-content {
+            display: none;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+            border-radius: 0 0 14px 14px;
+            padding: 1.25rem;
+        }
+        .flow-content.active { display: block; }
+        .flow-tabs {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .flow-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray-400);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .flow-tab:hover, .flow-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .flow-tab .count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.1rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .trigger-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .trigger-box-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--warning);
+            margin-bottom: 0.5rem;
+        }
+        .trigger-object {
+            background: rgba(245, 158, 11, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            margin-left: auto;
+        }
+        .trigger-condition-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+        }
+        .trigger-condition-item:last-child { border-bottom: none; }
+        .trigger-field { color: var(--secondary); font-weight: 600; }
+        .trigger-operator { color: var(--gray-500); font-size: 0.75rem; }
+        .trigger-value { color: var(--success); font-weight: 500; }
+        .decision-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+        .decision-card-header {
+            padding: 0.85rem;
+            background: rgba(139, 92, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .decision-card-header:hover { background: rgba(139, 92, 246, 0.2); }
+        .decision-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .decision-title i { color: var(--accent); }
+        .decision-rules-count {
+            background: rgba(139, 92, 246, 0.3);
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            color: #c4b5fd;
+        }
+        .decision-card-body { display: none; padding: 0.85rem; }
+        .decision-card-body.active { display: block; }
+        .rule-item {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 8px;
+            padding: 0.85rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--primary);
+        }
+        .rule-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+        }
+        .rule-header i { color: var(--success); }
+        .condition-logic {
+            font-size: 0.65rem;
+            color: var(--warning);
+            background: rgba(245, 158, 11, 0.2);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            margin-left: auto;
+        }
+        .condition-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0;
+            font-size: 0.8rem;
+        }
+        .condition-left {
+            color: var(--secondary);
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+        .condition-op { color: var(--warning); font-weight: 600; }
+        .condition-right {
+            color: var(--success);
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+        .record-op-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+        .record-op-header {
+            padding: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .record-op-header.lookup { background: rgba(14, 165, 233, 0.1); }
+        .record-op-header.create { background: rgba(16, 185, 129, 0.1); }
+        .record-op-header.update { background: rgba(245, 158, 11, 0.1); }
+        .record-op-header:hover { filter: brightness(1.2); }
+        .record-op-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .record-op-title i.lookup { color: var(--secondary); }
+        .record-op-title i.create { color: var(--success); }
+        .record-op-title i.update { color: var(--warning); }
+        .record-op-object {
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.7rem;
+        }
+        .record-op-object.lookup { background: rgba(14, 165, 233, 0.2); color: #7dd3fc; }
+        .record-op-object.create { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .record-op-object.update { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        .record-op-body { display: none; padding: 0.85rem; }
+        .record-op-body.active { display: block; }
+        .field-grid { display: grid; gap: 0.4rem; }
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+        .field-name { color: var(--primary-light); font-weight: 500; min-width: 140px; }
+        .field-arrow { color: var(--gray-500); }
+        .field-value {
+            color: var(--success);
+            font-family: monospace;
+            font-size: 0.75rem;
+            word-break: break-all;
+        }
+        .scenario-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 0.6rem;
+            overflow: hidden;
+        }
+        .scenario-card:hover { border-color: rgba(99, 102, 241, 0.3); }
+        .scenario-header {
+            padding: 0.85rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+        .scenario-header:hover { background: rgba(99, 102, 241, 0.1); }
+        .scenario-category-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .cat-decision { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; }
+        .cat-null { background: rgba(236, 72, 153, 0.2); color: #f9a8d4; }
+        .cat-default { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        .cat-lookup { background: rgba(14, 165, 233, 0.2); color: #7dd3fc; }
+        .cat-empty { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        .cat-create { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .cat-update { background: rgba(251, 191, 36, 0.2); color: #fde68a; }
+        .cat-apex { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; }
+        .cat-screen { background: rgba(6, 182, 212, 0.2); color: #67e8f9; }
+        .cat-formula { background: rgba(244, 63, 94, 0.2); color: #fda4af; }
+        .cat-threshold { background: rgba(34, 211, 238, 0.2); color: #a5f3fc; }
+        .cat-variable { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
+        .cat-trigger { background: rgba(251, 146, 60, 0.2); color: #fdba74; }
+        .scenario-query {
+            flex: 1;
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            line-height: 1.4;
+        }
+        .scenario-toggle { color: var(--gray-500); transition: transform 0.3s; }
+        .scenario-header.active .scenario-toggle { transform: rotate(180deg); }
+        .scenario-body {
+            display: none;
+            padding: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(15, 23, 42, 0.3);
+        }
+        .scenario-body.active { display: block; }
+        .scenario-context { margin-bottom: 0.75rem; }
+        .scenario-label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .scenario-context-value {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 0.6rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--secondary);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .expected-items { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .expected-item {
+            padding: 0.3rem 0.6rem;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 5px;
+            font-size: 0.75rem;
+            color: #6ee7b7;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .expected-item i { font-size: 0.55rem; }
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .chart-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 1.25rem;
+        }
+        .chart-card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-card h3 i { color: var(--primary); }
+        .chart-container { position: relative; height: 260px; }
+        .footer {
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-500);
+        }
+        .empty-state i { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--darker); }
+        ::-webkit-scrollbar-thumb { background: var(--gray-500); border-radius: 4px; }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.75rem; }
+            .nav-links { display: none; }
+            .flow-stats-mini { display: none; }
+            .charts-section { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo"><i class="fas fa-brain"></i> Flow AI Implementation</div>
+            <div class="nav-links">
+                <a href="#flows"><i class="fas fa-project-diagram"></i> Flows</a>
+                <a href="#charts"><i class="fas fa-chart-pie"></i> Analytics</a>
+            </div>
+        </div>
+    </nav>
+    <section class="hero">
+        <h1>🚀 Salesforce Flow Analysis Dashboard</h1>
+        <p>AI-powered analysis with complete decision trees, trigger conditions, record operations, and all 87 test scenarios</p>
+        <div class="hero-badges">
+            <span class="badge badge-primary"><i class="fas fa-robot"></i> GPT-4o Powered</span>
+            <span class="badge badge-success"><i class="fas fa-check-circle"></i> 11 Flows Analyzed</span>
+            <span class="badge badge-warning"><i class="fas fa-vials"></i> 87 Test Scenarios</span>
+        </div>
+    </section>
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon flows"><i class="fas fa-project-diagram"></i></div>
+                <div class="stat-value">11</div>
+                <div class="stat-label">Total Flows</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon scenarios"><i class="fas fa-flask"></i></div>
+                <div class="stat-value">87</div>
+                <div class="stat-label">Test Scenarios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon decisions"><i class="fas fa-code-branch"></i></div>
+                <div class="stat-value">14</div>
+                <div class="stat-label">Decision Points</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon categories"><i class="fas fa-tags"></i></div>
+                <div class="stat-value">17</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon triggers"><i class="fas fa-bolt"></i></div>
+                <div class="stat-value">7</div>
+                <div class="stat-label">Triggered Flows</div>
+            </div>
+        </div>
+    </section>
+    <div class="container">
+        <section id="flows">
+            <div class="section-header">
+                <h2><i class="fas fa-project-diagram"></i> Complete Flow Analysis with All Scenarios</h2>
+            </div>
+            <div class="controls-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="flowSearch" placeholder="Search flows..." oninput="filterFlows()">
+                </div>
+                <select class="filter-select" id="typeFilter" onchange="filterFlows()">
+                    <option value="">All Types</option>
+                    <option value="Flow">Screen Flow</option>
+                    <option value="AutoLaunchedFlow">Auto-Launched</option>
+                    <option value="Workflow">Workflow</option>
+                </select>
+                <select class="filter-select" id="categoryFilter" onchange="filterFlows()">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div id="flowsContainer"></div>
+        </section>
+        <section id="charts" class="charts-section">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-pie"></i> Scenarios by Category</h3>
+                <div class="chart-container"><canvas id="categoriesChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-bar"></i> Scenarios per Flow</h3>
+                <div class="chart-container"><canvas id="flowsChart"></canvas></div>
+            </div>
+        </section>
+    </div>
+    <footer class="footer">
+        <p>Flow AI Implementation | All data embedded - works offline</p>
+        <p style="margin-top: 0.4rem; font-size: 0.8rem;">Run <code style="background: rgba(99,102,241,0.2); padding: 0.2rem 0.4rem; border-radius: 4px;">python3 run_decision_scenarios.py --report</code> to test all scenarios</p>
+    </footer>
+
+    <script>
+        // EMBEDDED DATA - No fetch required!
+        const flowData = {"analyzed_at":"2026-02-28T16:51:14.426517","flows":[{"flow_name":"Create Property","developer_name":"Create_property","process_type":"Flow","trigger_type":null,"trigger_object":null,"trigger_conditions":[],"decisions":[{"name":"If_content_document_found","label":"If Content Document found","rules":[{"name":"Content_Document_Link_found","label":"Content Document Found","condition_logic":"and","conditions":[{"left":"get_main_content_document","operator":"IsNull","right":false}]}]},{"name":"if_content_version_found","label":"If Content Version found","rules":[{"name":"picture_found","label":"Picture Found","condition_logic":"and","conditions":[{"left":"get_main_content_version","operator":"IsNull","right":false}]}]}],"record_lookups":[{"name":"get_main_content_document","label":"Get Main Content Document","object":"ContentDocumentLink","filters":[{"field":"LinkedEntityId","operator":"EqualTo","value":"${create_property}"}]},{"name":"get_main_content_version","label":"Get Main Content Version","object":"ContentVersion","filters":[{"field":"ContentDocumentId","operator":"EqualTo","value":"${get_main_content_document.ContentDocumentId}"},{"field":"IsLatest","operator":"EqualTo","value":true}]}],"record_creates":[{"name":"create_property","label":"Create Property","object":"Property__c","fields":[{"field":"Address__c","value":"${property_address.street}"},{"field":"Baths__c","value":"${number_of_baths}"},{"field":"Beds__c","value":"${number_of_beds}"},{"field":"Broker__c","value":"${property_broker.recordId}"},{"field":"City__c","value":"${property_address.city}"},{"field":"Date_Listed__c","value":"${$Flow.CurrentDate}"},{"field":"Description__c","value":"${property_description}"},{"field":"Location__Latitude__s","value":"${geocode_address.lat}"},{"field":"Location__Longitude__s","value":"${geocode_address.lon}"},{"field":"Name","value":"${property_name}"},{"field":"Price__c","value":"${property_price}"},{"field":"State__c","value":"${property_address.province}"},{"field":"Status__c","value":"Available"},{"field":"Tags__c","value":"${property_tags}"},{"field":"Zip__c","value":"${property_address.postalCode}"}]}],"record_updates":[{"name":"set_main_picture","label":"Set Property Main Picture & Thumbnail","object":"Property__c","fields":[{"field":"Picture__c","value":"${main_picture_url}"},{"field":"Thumbnail__c","value":"${main_picture_url}"}]}],"apex_calls":[{"name":"geocode_address","label":"Geocode Address","action_name":"GeocodingService","action_type":"apex"}],"email_alerts":[],"chatter_posts":[],"screens":[{"name":"address","label":"Address","fields":[{"name":"property_address","label":null,"type":"ComponentInstance","required":true,"data_type":null}]},{"name":"Error2","label":"Error","fields":[{"name":"error2_text","label":"<p>Unknown error retrieving uploaded picture.</p>","type":"DisplayText","required":null,"data_type":null}]},{"name":"Error3","label":"Error","fields":[{"name":"error3_text","label":"<p><span style=\"background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);\">Unknown error retrieving uploaded picture.</span></p>","type":"DisplayText","required":null,"data_type":null}]},{"name":"Error4","label":"Error","fields":[{"name":"error4_text","label":"<p><span style=\"background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);\">Unknown error setting picture as Property thumbnail.</span></p>","type":"DisplayText","required":null,"data_type":null}]},{"name":"Error5","label":"Error","fields":[{"name":"error5_text","label":"<p>Error retrieving geocoded address.</p>","type":"DisplayText","required":null,"data_type":null}]},{"name":"error_creating_records","label":"Error","fields":[{"name":"error","label":"<p>Error creating records. Try again.</p>","type":"DisplayText","required":null,"data_type":null}]},{"name":"navigate_to_record_detail","label":"Navigate to Record","fields":[{"name":"navigate_to_record_lwc","label":null,"type":"ComponentInstance","required":true,"data_type":null}]},{"name":"new_property","label":"New Property","fields":[{"name":"property_name","label":"Property Name","type":"InputField","required":true,"data_type":"String"},{"name":"property_description","label":"Description","type":"InputField","required":false,"data_type":"String"},{"name":"property_broker","label":null,"type":"ComponentInstance","required":true,"data_type":null},{"name":"property_price","label":"Price","type":"InputField","required":true,"data_type":"Currency"}]},{"name":"property_details","label":"Property Details","fields":[{"name":"number_of_beds","label":"Number of Bedrooms","type":"InputField","required":false,"data_type":"Number"},{"name":"number_of_baths","label":"Number of Bathrooms","type":"InputField","required":false,"data_type":"Number"},{"name":"property_tags","label":"Tags","type":"InputField","required":false,"data_type":"String"}]},{"name":"upload_picture","label":"Upload Picture","fields":[{"name":"property_picture","label":null,"type":"ComponentInstance","required":true,"data_type":null}]}],"formulas":[{"name":"main_picture_url","expression":"\"/sfc/servlet.shepherd/version/download/\" + {!get_main_content_version.Id}","data_type":"String","description":"Main picture URL that we'll use as thumbnail"}],"variables":[],"loops":[],"record_trigger_type":null,"requires_change":null},{"flow_name":"Opportunity Won Account Priority Actions","developer_name":"Opportunity_Won_Account_Priority_Actions","process_type":"Workflow","trigger_type":null,"trigger_object":null,"trigger_conditions":[],"decisions":[{"name":"myDecision","label":"myDecision","rules":[{"name":"myRule_1","label":">1Lakh make high Priority","condition_logic":"and","conditions":[{"left":"myVariable_current.Amount","operator":"GreaterThanOrEqualTo","right":100000.0},{"left":"myVariable_current.IsWon","operator":"EqualTo","right":true}]}]},{"name":"myDecision2","label":"myDecision2","rules":[{"name":"myRule_3","label":"Won & Account Priority = Medium","condition_logic":"and","conditions":[{"left":"myVariable_current.Account.CustomerPriority__c","operator":"EqualTo","right":"High"},{"left":"myVariable_current.IsWon","operator":"EqualTo","right":true}]}]},{"name":"myRule_1_pmetdec","label":"Previously Met Decision","rules":[{"name":"myRule_1_pmetnullrule","label":"Previously Met - Null","condition_logic":"or","conditions":[{"left":"myVariable_old","operator":"IsNull","right":true}]},{"name":"myRule_1_pmetrule","label":"Previously Met - Prev","condition_logic":"and","conditions":[{"left":"myVariable_old.Amount","operator":"GreaterThanOrEqualTo","right":100000.0},{"left":"myVariable_old.IsWon","operator":"EqualTo","right":true}]}]},{"name":"myRule_3_pmetdec","label":"Previously Met Decision","rules":[{"name":"myRule_3_pmetnullrule","label":"Previously Met - Null","condition_logic":"or","conditions":[{"left":"myVariable_old","operator":"IsNull","right":true}]},{"name":"myRule_3_pmetrule","label":"Previously Met - Prev","condition_logic":"and","conditions":[{"left":"myVariable_old.Account.CustomerPriority__c","operator":"EqualTo","right":"High"},{"left":"myVariable_old.IsWon","operator":"EqualTo","right":true}]}]}],"record_lookups":[],"record_creates":[],"record_updates":[{"name":"myRule_1_A1","label":"Acc to HIGH Priority","object":"Account","fields":[{"field":"CustomerPriority__c","value":"High"}]}],"apex_calls":[],"email_alerts":[],"chatter_posts":[{"name":"myRule_3_A1","label":"Post to Sales Group","action_name":"chatterPost","action_type":"chatterPost"}],"screens":[],"formulas":[],"variables":[{"name":"myVariable_current","data_type":"SObject","object_type":"Opportunity","is_input":true,"is_output":true},{"name":"myVariable_old","data_type":"SObject","object_type":"Opportunity","is_input":true,"is_output":false},{"name":"RecursiveCountVariable","data_type":"Number","object_type":null,"is_input":true,"is_output":false}],"loops":[]},{"flow_name":"Case Closed chatter","developer_name":"Case_Closed_chatter","process_type":"AutoLaunchedFlow","trigger_type":"RecordAfterSave","trigger_object":"Case","trigger_conditions":[{"field":"Status","operator":"EqualTo","value":"Closed"}],"decisions":[],"record_lookups":[],"record_creates":[],"record_updates":[],"apex_calls":[],"email_alerts":[],"chatter_posts":[{"name":"Post_To_chatter_Message","label":"Post To chatter Message","action_name":"chatterPost","action_type":"chatterPost"}],"screens":[],"formulas":[],"variables":[],"loops":[],"record_trigger_type":"Update","requires_change":true},{"flow_name":"Survey Form","developer_name":"Survey_Form","process_type":"Flow","trigger_type":null,"trigger_object":null,"trigger_conditions":[],"decisions":[{"name":"Interested_or_not","label":"Interested or not","rules":[{"name":"Interested_Outcome","label":"Interested Outcome","condition_logic":"and","conditions":[{"left":"Are_you_interested_in_taking_survey","operator":"EqualTo","right":"${Yes}"}]}]}],"record_lookups":[],"record_creates":[{"name":"Create_Survey_Records","label":"Create Survey Records","object":"Survey__c","fields":[{"field":"Additional_Comment__c","value":"${Any_Additional_Comment}"},{"field":"Name__c","value":"${Enter_Your_Name}"},{"field":"Rating__c","value":"${How_will_you_rate_our_website}"}]}],"record_updates":[],"apex_calls":[],"email_alerts":[],"chatter_posts":[],"screens":[{"name":"Interested_in_Survey_Check","label":"Interested in Survey Check","fields":[{"name":"Are_you_interested_in_taking_survey","label":"Are you interested in taking survey","type":"DropdownBox","required":false,"data_type":"String"}]},{"name":"Not_Interested_Scren","label":"Not Interested Scren","fields":[{"name":"Thank_you_message","label":"<p>Thank you for your response.</p>","type":"DisplayText","required":null,"data_type":null}]},{"name":"Survey_Question_Screen","label":"Survey Question Screen","fields":[{"name":"Enter_Your_Name","label":"Enter Your Name","type":"InputField","required":true,"data_type":"String"},{"name":"How_will_you_rate_our_website","label":"How will you rate our website","type":"DropdownBox","required":false,"data_type":"String"},{"name":"Any_Additional_Comment","label":"Any Additional Comment","type":"LargeTextArea","required":false,"data_type":null}]}],"formulas":[],"variables":[],"loops":[],"record_trigger_type":null,"requires_change":null},{"flow_name":"Notify deal closed","developer_name":"Notify_deal_closed","process_type":"AutoLaunchedFlow","trigger_type":"RecordAfterSave","trigger_object":"Opportunity","trigger_conditions":[{"field":"StageName","operator":"EqualTo","value":"Closed Won"}],"decisions":[],"record_lookups":[],"record_creates":[],"record_updates":[],"apex_calls":[],"email_alerts":[{"name":"Notify_the_opportunity_owner","label":"Notify the opportunity owner","action_name":"Opportunity.Email_alert_for_opportunity_closed_to_owner","action_type":"emailAlert"}],"chatter_posts":[],"screens":[],"formulas":[],"variables":[],"loops":[],"record_trigger_type":"Update","requires_change":true},{"flow_name":"Account MerageDemerage Event Flow","developer_name":"Account_MerageDemerage_Event_Flow","process_type":"AutoLaunchedFlow","trigger_type":"PlatformEvent","trigger_object":"Account_MerageDemerage__e","trigger_conditions":[],"decisions":[],"record_lookups":[],"record_creates":[{"name":"CRN_Merage","label":"CRN Merage","object":"CRN_Merage__c","fields":[{"field":"Status_Reason__c","value":"${$Record.Status_Reason__c}"},{"field":"Status__c","value":"${$Record.Status__c}"},{"field":"UCIC__c","value":"${$Record.UCIC__c}"},{"field":"srcSystemId__c","value":"${$Record.srcSystemId__c}"}]}],"record_updates":[],"apex_calls":[],"email_alerts":[],"chatter_posts":[],"screens":[],"formulas":[],"variables":[],"loops":[],"record_trigger_type":null,"requires_change":null},{"flow_name":"Platform Event Trigger","developer_name":"Platform_Event_Trigger","process_type":"AutoLaunchedFlow","trigger_type":"PlatformEvent","trigger_object":"Notification_Event__e","trigger_conditions":[],"decisions":[],"record_lookups":[],"record_creates":[],"record_updates":[],"apex_calls":[],"email_alerts":[],"chatter_posts":[{"name":"Platform_Event_Message_recieve","label":"Platform Event Message recieve","action_name":"chatterPost","action_type":"chatterPost"}],"screens":[],"formulas":[],"variables":[],"loops":[],"record_trigger_type":null,"requires_change":null},{"flow_name":"offer_to_lead","developer_name":"offer_to_lead","process_type":"AutoLaunchedFlow","trigger_type":"RecordAfterSave","trigger_object":"Offer__c","trigger_conditions":[{"field":"Product__c","operator":"EqualTo","value":"Credit Card"},{"field":"Offer_Name__c","operator":"EqualTo","value":"Credit Card"},{"field":"Product_Category__c","operator":"EqualTo","value":"Credit Card"},{"field":"CustomerID__c","operator":"NotEqualTo","value":""},{"field":"Account_Number__c","operator":"NotEqualTo","value":""},{"field":"External_Offer_ID__c","operator":"NotEqualTo","value":""}],"decisions":[],"record_lookups":[],"record_creates":[{"name":"offer_to_lead_record","label":"offer_to_lead_record","object":"Lead","fields":[{"field":"Campaign__c","value":"${$Record.Campaign__c}"},{"field":"City","value":"${$Record.Office_City__c}"},{"field":"Company","value":"IDFC"},{"field":"Company_Name__c","value":"IDFC"},{"field":"Customer_Category__c","value":"Individual"},{"field":"Eligibility_for_verif_waiver_or_not__c","value":"${$Record.Eligibility_for_verif_waiver_or_not__c}"},{"field":"Email","value":"${$Record.CustomerID__r.Email__c}"},{"field":"FirstName","value":"${$Record.CustomerID__r.Name}"},{"field":"LastName","value":"Yadav"},{"field":"Lead_Source__c","value":"Internet"},{"field":"Lead_Sub_Status__c","value":"New"},{"field":"Mobile_No__c","value":"${$Record.Mobile_no__c}"},{"field":"Offer_ID__c","value":"${$Record.Name}"},{"field":"Phone","value":"${$Record.Mobile_no__c}"},{"field":"PostalCode","value":"${$Record.Office_PIN_Code__c}"},{"field":"Product__c","value":"${$Record.Product__c}"},{"field":"Related_Account__c","value":"${$Record.CustomerID__c}"},{"field":"Segment_Type__c","value":"${$Record.Product_Category__c}"},{"field":"State","value":"${$Record.Office_State__c}"},{"field":"Status","value":"New"}]}],"record_updates":[],"apex_calls":[],"email_alerts":[],"chatter_posts":[],"screens":[],"formulas":[],"variables":[],"loops":[],"record_trigger_type":"Create","requires_change":null},{"flow_name":"Offertoleadconversion","developer_name":"Offertoleadconversion","process_type":"Flow","trigger_type":null,"trigger_object":null,"trigger_conditions":[],"decisions":[{"name":"To_Check_offer_Active","label":"To Check offer Active","rules":[{"name":"to_check_offer_status","label":"to check offer status","condition_logic":"and","conditions":[{"left":"offer_Record.Offer_Status__c","operator":"EqualTo","right":"Active"}]}]}],"record_lookups":[{"name":"offer_Record","label":"offer Record","object":"Offer__c","filters":[]}],"record_creates":[{"name":"offer_to_lead_creation","label":"offer to lead creation","object":"Lead","fields":[{"field":"Campaign__c","value":"${offer_Record.Campaign__c}"},{"field":"City","value":"${offer_Record.Office_City__c}"},{"field":"Company","value":"IDFC"},{"field":"Customer_Category__c","value":"Individual"},{"field":"Eligibility_for_verif_waiver_or_not__c","value":"${offer_Record.Eligibility_for_verif_waiver_or_not__c}"},{"field":"Email","value":"${offer_Record.Email__c}"},{"field":"FirstName","value":"${offer_Record.CustomerID__r.Name}"},{"field":"LastName","value":"Yadav"},{"field":"Lead_Source__c","value":"Internet"},{"field":"Lead_Sub_Status__c","value":"New"},{"field":"Offer_ID__c","value":"${offer_Record.Name}"},{"field":"PostalCode","value":"${offer_Record.Office_PIN_Code__c}"},{"field":"Product__c","value":"${offer_Record.Product__c}"},{"field":"Related_Account__c","value":"${offer_Record.CustomerID__c}"},{"field":"Segment_Type__c","value":"${offer_Record.Product__c}"},{"field":"State","value":"${offer_Record.Office_State__c}"},{"field":"Status","value":"New"},{"field":"isNew__c","value":true}]}],"record_updates":[],"apex_calls":[],"email_alerts":[],"chatter_posts":[],"screens":[{"name":"Offer_Cannot_Convert","label":"Offer Cannot Convert","fields":[{"name":"Error_Text","label":"<p>Offer Cannot Convert because Offer is Not Active</p>","type":"DisplayText","required":null,"data_type":null}]}],"formulas":[],"variables":[],"loops":[],"record_trigger_type":null,"requires_change":null},{"flow_name":"Lead Communication Flow","developer_name":"Lead_Communication_Flow","process_type":"AutoLaunchedFlow","trigger_type":"RecordAfterSave","trigger_object":"Lead","trigger_conditions":[{"field":"Product__c","operator":"EqualTo","value":"Credit Card"},{"field":"Email","operator":"IsNull","value":false}],"decisions":[{"name":"To_check_Creation_and_Closure_Lead","label":"To check Creation and Closure Lead","rules":[{"name":"Is_Lead_Created","label":"Is Lead Created","condition_logic":"and","conditions":[{"left":"$Record.isNew__c","operator":"EqualTo","right":true}]},{"name":"Is_Lead_Closed","label":"Is Lead Closed","condition_logic":"and","conditions":[{"left":"$Record.isNew__c","operator":"EqualTo","right":false}]}]}],"record_lookups":[],"record_creates":[{"name":"LeadEmailTaskCreation","label":"LeadEmailTaskCreation","object":"Task","fields":[{"field":"ActivityDate","value":"${$Flow.CurrentDate}"},{"field":"CallType","value":"Internal"},{"field":"Send_Email__c","value":true},{"field":"Status","value":"Completed"},{"field":"Subject","value":"Email"},{"field":"TaskSubtype","value":"Email"}]}],"record_updates":[],"apex_calls":[],"email_alerts":[{"name":"On_Lead_Closure","label":"On Lead Closure","action_name":"Lead.This_Email_Alert_will_trigger_on_Lead_Closure","action_type":"emailAlert"},{"name":"On_Lead_Creation","label":"On Lead Creation","action_name":"Lead.This_Email_Alert_will_trigger_on_Lead_Creation","action_type":"emailAlert"},{"name":"This_is_default_email","label":"This is default email","action_name":"Lead.This_Email_Alert_will_trigger_on_Lead_Closure","action_type":"emailAlert"}],"chatter_posts":[],"screens":[],"formulas":[],"variables":[],"loops":[],"record_trigger_type":"CreateAndUpdate","requires_change":null},{"flow_name":"Schedule Flow Example","developer_name":"Schedule_Flow_Example","process_type":"AutoLaunchedFlow","trigger_type":"Scheduled","trigger_object":"Case","trigger_conditions":[],"decisions":[],"record_lookups":[],"record_creates":[],"record_updates":[{"name":"Case_Priority","label":"Case Priority","object":"Case","fields":[{"field":"Description","value":"Priority Updated by Schedule Flow"},{"field":"Priority","value":"High"}]}],"apex_calls":[],"email_alerts":[],"chatter_posts":[],"screens":[],"formulas":[],"variables":[],"loops":[],"record_trigger_type":null,"requires_change":null}]};
+        
+        const scenarioData = {"generated_at":"2026-02-28T16:51:14.425672","total_scenarios":87,"flows_analyzed":11,"categories":["Decision Logic Analysis","Null Value Handling","Default Path Analysis","Record Lookup Analysis","Empty Result Handling","Record Creation Analysis","Record Update Analysis","Apex Integration Analysis","Apex Fault Handling","Screen Validation Analysis","Screen Input Analysis","Formula Analysis","Decision Thresholds","Input Variable Analysis","Output Variable Analysis","Flow Trigger Conditions","Flow Trigger Edge Cases"],"scenarios":[{"id":"decision_If_content_document_found_Content_Document_Link_found","category":"Decision Logic Analysis","flow":"Create_property","query":"In 'Create Property', explain the decision 'If Content Document found' - specifically when does the 'Content Document Found' path execute?","context":"Conditions: get_main_content_document IsNull False","expected_analysis":["get_main_content_document IsNull False"]},{"id":"decision_null_If_content_document_found_0","category":"Null Value Handling","flow":"Create_property","query":"How does 'Create Property' handle null values for get_main_content_document? What path does the flow take when this is null vs not null?","context":"Null check: get_main_content_document IsNull = False","expected_analysis":["Checks if get_main_content_document is null","Expected null state: False"]},{"id":"decision_default_If_content_document_found","category":"Default Path Analysis","flow":"Create_property","query":"In 'Create Property', what is the default outcome if NONE of the conditions in 'If Content Document found' are met? What path does the flow take?","context":"Analyzing default connector for decision: If Content Document found","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"decision_if_content_version_found_picture_found","category":"Decision Logic Analysis","flow":"Create_property","query":"In 'Create Property', explain the decision 'If Content Version found' - specifically when does the 'Picture Found' path execute?","context":"Conditions: get_main_content_version IsNull False","expected_analysis":["get_main_content_version IsNull False"]},{"id":"decision_null_if_content_version_found_0","category":"Null Value Handling","flow":"Create_property","query":"How does 'Create Property' handle null values for get_main_content_version? What path does the flow take when this is null vs not null?","context":"Null check: get_main_content_version IsNull = False","expected_analysis":["Checks if get_main_content_version is null","Expected null state: False"]},{"id":"decision_default_if_content_version_found","category":"Default Path Analysis","flow":"Create_property","query":"In 'Create Property', what is the default outcome if NONE of the conditions in 'If Content Version found' are met? What path does the flow take?","context":"Analyzing default connector for decision: If Content Version found","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"lookup_get_main_content_document","category":"Record Lookup Analysis","flow":"Create_property","query":"In 'Create Property', how does the 'Get Main Content Document' query work? What records does it fetch from ContentDocumentLink and what filters are applied?","context":"Object: ContentDocumentLink, Filters: LinkedEntityId EqualTo ${create_property}","expected_analysis":["LinkedEntityId EqualTo ${create_property}"]},{"id":"lookup_empty_get_main_content_document","category":"Empty Result Handling","flow":"Create_property","query":"What happens in 'Create Property' if the 'Get Main Content Document' query returns NO records? How does the flow handle this scenario?","context":"Analyzing null/empty handling for ContentDocumentLink query","expected_analysis":["Null assignment handling","Downstream decision impact"]},{"id":"lookup_get_main_content_version","category":"Record Lookup Analysis","flow":"Create_property","query":"In 'Create Property', how does the 'Get Main Content Version' query work? What records does it fetch from ContentVersion and what filters are applied?","context":"Object: ContentVersion, Filters: ContentDocumentId EqualTo ${get_main_content_document.ContentDocumentId}, IsLatest EqualTo True","expected_analysis":["ContentDocumentId EqualTo ${get_main_content_document.ContentDocumentId}","IsLatest EqualTo True"]},{"id":"lookup_empty_get_main_content_version","category":"Empty Result Handling","flow":"Create_property","query":"What happens in 'Create Property' if the 'Get Main Content Version' query returns NO records? How does the flow handle this scenario?","context":"Analyzing null/empty handling for ContentVersion query","expected_analysis":["Null assignment handling","Downstream decision impact"]},{"id":"create_create_property","category":"Record Creation Analysis","flow":"Create_property","query":"In 'Create Property', what Property__c record is created by 'Create Property'? What fields are set and from where do they get their values?","context":"Object: Property__c, Fields: Address__c, Baths__c, Beds__c, Broker__c, City__c, Date_Listed__c, Description__c, Location__Latitude__s, Location__Longitude__s, Name, Price__c, State__c, Status__c, Tags__c, Zip__c","expected_analysis":["Address__c = ${property_address.street}","Baths__c = ${number_of_baths}","Beds__c = ${number_of_beds}","Broker__c = ${property_broker.recordId}","City__c = ${property_address.city}","Date_Listed__c = ${$Flow.CurrentDate}","Description__c = ${property_description}","Location__Latitude__s = ${geocode_address.lat}","Location__Longitude__s = ${geocode_address.lon}","Name = ${property_name}","Price__c = ${property_price}","State__c = ${property_address.province}","Status__c = Available","Tags__c = ${property_tags}","Zip__c = ${property_address.postalCode}"]},{"id":"update_set_main_picture","category":"Record Update Analysis","flow":"Create_property","query":"In 'Create Property', what changes does 'Set Property Main Picture & Thumbnail' make to the record? Which fields are modified?","context":"Object: Property__c, Updates: 2 fields","expected_analysis":["Picture__c -> ${main_picture_url}","Thumbnail__c -> ${main_picture_url}"]},{"id":"apex_geocode_address","category":"Apex Integration Analysis","flow":"Create_property","query":"In 'Create Property', what does the Apex action 'GeocodingService' do? What inputs does it receive and what outputs does it return?","context":"Apex class: GeocodingService","expected_analysis":["Action: GeocodingService","Input/output mapping"]},{"id":"apex_fault_geocode_address","category":"Apex Fault Handling","flow":"Create_property","query":"What happens in 'Create Property' if the Apex callout 'GeocodingService' fails? Is there error handling?","context":"Analyzing fault connector for GeocodingService","expected_analysis":["Fault handling path","Error recovery"]},{"id":"screen_address_validation","category":"Screen Validation Analysis","flow":"Create_property","query":"In 'Create Property', what are the required fields on the 'Address' screen? What validation happens?","context":"Screen: Address, Required fields: 1","expected_analysis":["property_address (required)"]},{"id":"screen_address_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Address' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['property_address']","expected_analysis":["property_address: None"]},{"id":"screen_Error2_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['error2_text']","expected_analysis":["error2_text: None"]},{"id":"screen_Error3_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['error3_text']","expected_analysis":["error3_text: None"]},{"id":"screen_Error4_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['error4_text']","expected_analysis":["error4_text: None"]},{"id":"screen_Error5_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['error5_text']","expected_analysis":["error5_text: None"]},{"id":"screen_error_creating_records_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Error' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['error']","expected_analysis":["error: None"]},{"id":"screen_navigate_to_record_detail_validation","category":"Screen Validation Analysis","flow":"Create_property","query":"In 'Create Property', what are the required fields on the 'Navigate to Record' screen? What validation happens?","context":"Screen: Navigate to Record, Required fields: 1","expected_analysis":["navigate_to_record_lwc (required)"]},{"id":"screen_navigate_to_record_detail_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Navigate to Record' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['navigate_to_record_lwc']","expected_analysis":["navigate_to_record_lwc: None"]},{"id":"screen_new_property_validation","category":"Screen Validation Analysis","flow":"Create_property","query":"In 'Create Property', what are the required fields on the 'New Property' screen? What validation happens?","context":"Screen: New Property, Required fields: 3","expected_analysis":["property_name (required)","property_broker (required)","property_price (required)"]},{"id":"screen_new_property_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'New Property' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['property_name', 'property_description', 'property_broker', 'property_price']","expected_analysis":["property_name: String","property_description: String","property_broker: None","property_price: Currency"]},{"id":"screen_property_details_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Property Details' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['number_of_beds', 'number_of_baths', 'property_tags']","expected_analysis":["number_of_beds: Number","number_of_baths: Number","property_tags: String"]},{"id":"screen_upload_picture_validation","category":"Screen Validation Analysis","flow":"Create_property","query":"In 'Create Property', what are the required fields on the 'Upload Picture' screen? What validation happens?","context":"Screen: Upload Picture, Required fields: 1","expected_analysis":["property_picture (required)"]},{"id":"screen_upload_picture_inputs","category":"Screen Input Analysis","flow":"Create_property","query":"What user inputs are collected on the 'Upload Picture' screen in 'Create Property'? What types of data are expected?","context":"Screen fields: ['property_picture']","expected_analysis":["property_picture: None"]},{"id":"formula_main_picture_url","category":"Formula Analysis","flow":"Create_property","query":"In 'Create Property', explain the formula 'main_picture_url'. What does it calculate and where is the result used?","context":"Expression: \"/sfc/servlet.shepherd/version/download/\" + {!get_main_content_version.Id}","expected_analysis":["Formula: \"/sfc/servlet.shepherd/version/download/\" + {!get_main_content_version.Id}","Type: String"]},{"id":"decision_myDecision_myRule_1","category":"Decision Logic Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', explain the decision 'myDecision' - specifically when does the '>1Lakh make high Priority' path execute?","context":"Conditions: myVariable_current.Amount GreaterThanOrEqualTo 100000.0 and myVariable_current.IsWon EqualTo True","expected_analysis":["myVariable_current.Amount GreaterThanOrEqualTo 100000.0","myVariable_current.IsWon EqualTo True"]},{"id":"decision_threshold_myDecision_0","category":"Decision Thresholds","flow":"Opportunity_Won_Account_Priority_Actions","query":"What is the threshold value for myVariable_current.Amount in the 'Opportunity Won Account Priority Actions' flow? What happens when the value is exactly at, above, or below this threshold?","context":"Threshold condition: myVariable_current.Amount GreaterThanOrEqualTo 100000.0","expected_analysis":["Threshold: 100000.0","Operator: GreaterThanOrEqualTo"]},{"id":"decision_default_myDecision","category":"Default Path Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'myDecision' are met? What path does the flow take?","context":"Analyzing default connector for decision: myDecision","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"decision_myDecision2_myRule_3","category":"Decision Logic Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', explain the decision 'myDecision2' - specifically when does the 'Won & Account Priority = Medium' path execute?","context":"Conditions: myVariable_current.Account.CustomerPriority__c EqualTo High and myVariable_current.IsWon EqualTo True","expected_analysis":["myVariable_current.Account.CustomerPriority__c EqualTo High","myVariable_current.IsWon EqualTo True"]},{"id":"decision_default_myDecision2","category":"Default Path Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'myDecision2' are met? What path does the flow take?","context":"Analyzing default connector for decision: myDecision2","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"decision_myRule_1_pmetdec_myRule_1_pmetnullrule","category":"Decision Logic Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', explain the decision 'Previously Met Decision' - specifically when does the 'Previously Met - Null' path execute?","context":"Conditions: myVariable_old IsNull True","expected_analysis":["myVariable_old IsNull True"]},{"id":"decision_null_myRule_1_pmetdec_0","category":"Null Value Handling","flow":"Opportunity_Won_Account_Priority_Actions","query":"How does 'Opportunity Won Account Priority Actions' handle null values for myVariable_old? What path does the flow take when this is null vs not null?","context":"Null check: myVariable_old IsNull = True","expected_analysis":["Checks if myVariable_old is null","Expected null state: True"]},{"id":"decision_default_myRule_1_pmetdec","category":"Default Path Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'Previously Met Decision' are met? What path does the flow take?","context":"Analyzing default connector for decision: Previously Met Decision","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"decision_myRule_1_pmetdec_myRule_1_pmetrule","category":"Decision Logic Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', explain the decision 'Previously Met Decision' - specifically when does the 'Previously Met - Prev' path execute?","context":"Conditions: myVariable_old.Amount GreaterThanOrEqualTo 100000.0 and myVariable_old.IsWon EqualTo True","expected_analysis":["myVariable_old.Amount GreaterThanOrEqualTo 100000.0","myVariable_old.IsWon EqualTo True"]},{"id":"decision_threshold_myRule_1_pmetdec_0","category":"Decision Thresholds","flow":"Opportunity_Won_Account_Priority_Actions","query":"What is the threshold value for myVariable_old.Amount in the 'Opportunity Won Account Priority Actions' flow? What happens when the value is exactly at, above, or below this threshold?","context":"Threshold condition: myVariable_old.Amount GreaterThanOrEqualTo 100000.0","expected_analysis":["Threshold: 100000.0","Operator: GreaterThanOrEqualTo"]},{"id":"decision_default_myRule_1_pmetdec","category":"Default Path Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'Previously Met Decision' are met? What path does the flow take?","context":"Analyzing default connector for decision: Previously Met Decision","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"decision_myRule_3_pmetdec_myRule_3_pmetnullrule","category":"Decision Logic Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', explain the decision 'Previously Met Decision' - specifically when does the 'Previously Met - Null' path execute?","context":"Conditions: myVariable_old IsNull True","expected_analysis":["myVariable_old IsNull True"]},{"id":"decision_null_myRule_3_pmetdec_0","category":"Null Value Handling","flow":"Opportunity_Won_Account_Priority_Actions","query":"How does 'Opportunity Won Account Priority Actions' handle null values for myVariable_old? What path does the flow take when this is null vs not null?","context":"Null check: myVariable_old IsNull = True","expected_analysis":["Checks if myVariable_old is null","Expected null state: True"]},{"id":"decision_default_myRule_3_pmetdec","category":"Default Path Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'Previously Met Decision' are met? What path does the flow take?","context":"Analyzing default connector for decision: Previously Met Decision","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"decision_myRule_3_pmetdec_myRule_3_pmetrule","category":"Decision Logic Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', explain the decision 'Previously Met Decision' - specifically when does the 'Previously Met - Prev' path execute?","context":"Conditions: myVariable_old.Account.CustomerPriority__c EqualTo High and myVariable_old.IsWon EqualTo True","expected_analysis":["myVariable_old.Account.CustomerPriority__c EqualTo High","myVariable_old.IsWon EqualTo True"]},{"id":"decision_default_myRule_3_pmetdec","category":"Default Path Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', what is the default outcome if NONE of the conditions in 'Previously Met Decision' are met? What path does the flow take?","context":"Analyzing default connector for decision: Previously Met Decision","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"update_myRule_1_A1","category":"Record Update Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"In 'Opportunity Won Account Priority Actions', what changes does 'Acc to HIGH Priority' make to the record? Which fields are modified?","context":"Object: Account, Updates: 1 fields","expected_analysis":["CustomerPriority__c -> High"]},{"id":"variables_input","category":"Input Variable Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"What input variables does 'Opportunity Won Account Priority Actions' accept? What data must be passed to this flow for it to execute correctly?","context":"Input variables: ['myVariable_current', 'myVariable_old', 'RecursiveCountVariable']","expected_analysis":["myVariable_current: Opportunity","myVariable_old: Opportunity","RecursiveCountVariable: None"]},{"id":"variables_output","category":"Output Variable Analysis","flow":"Opportunity_Won_Account_Priority_Actions","query":"What output does 'Opportunity Won Account Priority Actions' return? What data can be accessed after this flow completes?","context":"Output variables: ['myVariable_current']","expected_analysis":["myVariable_current: Opportunity"]},{"id":"trigger_1","category":"Flow Trigger Conditions","flow":"Case_Closed_chatter","query":"When does the 'Case Closed chatter' flow get triggered? Specifically, what condition on Status must be met?","context":"Trigger: Status EqualTo Closed","expected_analysis":["Field: Status","Operator: EqualTo","Value: Closed"]},{"id":"trigger_edge_1","category":"Flow Trigger Edge Cases","flow":"Case_Closed_chatter","query":"What happens in 'Case Closed chatter' if Status is NOT equal to 'Closed'? Will the flow execute?","context":"Testing trigger condition: Status EqualTo Closed","expected_analysis":["Flow will NOT execute","Requires Status = Closed"]},{"id":"decision_Interested_or_not_Interested_Outcome","category":"Decision Logic Analysis","flow":"Survey_Form","query":"In 'Survey Form', explain the decision 'Interested or not' - specifically when does the 'Interested Outcome' path execute?","context":"Conditions: Are_you_interested_in_taking_survey EqualTo ${Yes}","expected_analysis":["Are_you_interested_in_taking_survey EqualTo ${Yes}"]},{"id":"decision_default_Interested_or_not","category":"Default Path Analysis","flow":"Survey_Form","query":"In 'Survey Form', what is the default outcome if NONE of the conditions in 'Interested or not' are met? What path does the flow take?","context":"Analyzing default connector for decision: Interested or not","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"create_Create_Survey_Records","category":"Record Creation Analysis","flow":"Survey_Form","query":"In 'Survey Form', what Survey__c record is created by 'Create Survey Records'? What fields are set and from where do they get their values?","context":"Object: Survey__c, Fields: Additional_Comment__c, Name__c, Rating__c","expected_analysis":["Additional_Comment__c = ${Any_Additional_Comment}","Name__c = ${Enter_Your_Name}","Rating__c = ${How_will_you_rate_our_website}"]},{"id":"screen_Interested_in_Survey_Check_inputs","category":"Screen Input Analysis","flow":"Survey_Form","query":"What user inputs are collected on the 'Interested in Survey Check' screen in 'Survey Form'? What types of data are expected?","context":"Screen fields: ['Are_you_interested_in_taking_survey']","expected_analysis":["Are_you_interested_in_taking_survey: String"]},{"id":"screen_Not_Interested_Scren_inputs","category":"Screen Input Analysis","flow":"Survey_Form","query":"What user inputs are collected on the 'Not Interested Scren' screen in 'Survey Form'? What types of data are expected?","context":"Screen fields: ['Thank_you_message']","expected_analysis":["Thank_you_message: None"]},{"id":"screen_Survey_Question_Screen_validation","category":"Screen Validation Analysis","flow":"Survey_Form","query":"In 'Survey Form', what are the required fields on the 'Survey Question Screen' screen? What validation happens?","context":"Screen: Survey Question Screen, Required fields: 1","expected_analysis":["Enter_Your_Name (required)"]},{"id":"screen_Survey_Question_Screen_inputs","category":"Screen Input Analysis","flow":"Survey_Form","query":"What user inputs are collected on the 'Survey Question Screen' screen in 'Survey Form'? What types of data are expected?","context":"Screen fields: ['Enter_Your_Name', 'How_will_you_rate_our_website', 'Any_Additional_Comment']","expected_analysis":["Enter_Your_Name: String","How_will_you_rate_our_website: String","Any_Additional_Comment: None"]},{"id":"trigger_1","category":"Flow Trigger Conditions","flow":"Notify_deal_closed","query":"When does the 'Notify deal closed' flow get triggered? Specifically, what condition on StageName must be met?","context":"Trigger: StageName EqualTo Closed Won","expected_analysis":["Field: StageName","Operator: EqualTo","Value: Closed Won"]},{"id":"trigger_edge_1","category":"Flow Trigger Edge Cases","flow":"Notify_deal_closed","query":"What happens in 'Notify deal closed' if StageName is NOT equal to 'Closed Won'? Will the flow execute?","context":"Testing trigger condition: StageName EqualTo Closed Won","expected_analysis":["Flow will NOT execute","Requires StageName = Closed Won"]},{"id":"create_CRN_Merage","category":"Record Creation Analysis","flow":"Account_MerageDemerage_Event_Flow","query":"In 'Account MerageDemerage Event Flow', what CRN_Merage__c record is created by 'CRN Merage'? What fields are set and from where do they get their values?","context":"Object: CRN_Merage__c, Fields: Status_Reason__c, Status__c, UCIC__c, srcSystemId__c","expected_analysis":["Status_Reason__c = ${$Record.Status_Reason__c}","Status__c = ${$Record.Status__c}","UCIC__c = ${$Record.UCIC__c}","srcSystemId__c = ${$Record.srcSystemId__c}"]},{"id":"trigger_1","category":"Flow Trigger Conditions","flow":"offer_to_lead","query":"When does the 'offer_to_lead' flow get triggered? Specifically, what condition on Product__c must be met?","context":"Trigger: Product__c EqualTo Credit Card","expected_analysis":["Field: Product__c","Operator: EqualTo","Value: Credit Card"]},{"id":"trigger_edge_1","category":"Flow Trigger Edge Cases","flow":"offer_to_lead","query":"What happens in 'offer_to_lead' if Product__c is NOT equal to 'Credit Card'? Will the flow execute?","context":"Testing trigger condition: Product__c EqualTo Credit Card","expected_analysis":["Flow will NOT execute","Requires Product__c = Credit Card"]},{"id":"trigger_2","category":"Flow Trigger Conditions","flow":"offer_to_lead","query":"When does the 'offer_to_lead' flow get triggered? Specifically, what condition on Offer_Name__c must be met?","context":"Trigger: Offer_Name__c EqualTo Credit Card","expected_analysis":["Field: Offer_Name__c","Operator: EqualTo","Value: Credit Card"]},{"id":"trigger_edge_2","category":"Flow Trigger Edge Cases","flow":"offer_to_lead","query":"What happens in 'offer_to_lead' if Offer_Name__c is NOT equal to 'Credit Card'? Will the flow execute?","context":"Testing trigger condition: Offer_Name__c EqualTo Credit Card","expected_analysis":["Flow will NOT execute","Requires Offer_Name__c = Credit Card"]},{"id":"trigger_3","category":"Flow Trigger Conditions","flow":"offer_to_lead","query":"When does the 'offer_to_lead' flow get triggered? Specifically, what condition on Product_Category__c must be met?","context":"Trigger: Product_Category__c EqualTo Credit Card","expected_analysis":["Field: Product_Category__c","Operator: EqualTo","Value: Credit Card"]},{"id":"trigger_edge_3","category":"Flow Trigger Edge Cases","flow":"offer_to_lead","query":"What happens in 'offer_to_lead' if Product_Category__c is NOT equal to 'Credit Card'? Will the flow execute?","context":"Testing trigger condition: Product_Category__c EqualTo Credit Card","expected_analysis":["Flow will NOT execute","Requires Product_Category__c = Credit Card"]},{"id":"trigger_4","category":"Flow Trigger Conditions","flow":"offer_to_lead","query":"When does the 'offer_to_lead' flow get triggered? Specifically, what condition on CustomerID__c must be met?","context":"Trigger: CustomerID__c NotEqualTo ","expected_analysis":["Field: CustomerID__c","Operator: NotEqualTo","Value: "]},{"id":"trigger_edge_4","category":"Flow Trigger Edge Cases","flow":"offer_to_lead","query":"What happens in 'offer_to_lead' if CustomerID__c is NOT equal to ''? Will the flow execute?","context":"Testing trigger condition: CustomerID__c NotEqualTo ","expected_analysis":["Flow will NOT execute","Requires CustomerID__c = "]},{"id":"trigger_5","category":"Flow Trigger Conditions","flow":"offer_to_lead","query":"When does the 'offer_to_lead' flow get triggered? Specifically, what condition on Account_Number__c must be met?","context":"Trigger: Account_Number__c NotEqualTo ","expected_analysis":["Field: Account_Number__c","Operator: NotEqualTo","Value: "]},{"id":"trigger_edge_5","category":"Flow Trigger Edge Cases","flow":"offer_to_lead","query":"What happens in 'offer_to_lead' if Account_Number__c is NOT equal to ''? Will the flow execute?","context":"Testing trigger condition: Account_Number__c NotEqualTo ","expected_analysis":["Flow will NOT execute","Requires Account_Number__c = "]},{"id":"trigger_6","category":"Flow Trigger Conditions","flow":"offer_to_lead","query":"When does the 'offer_to_lead' flow get triggered? Specifically, what condition on External_Offer_ID__c must be met?","context":"Trigger: External_Offer_ID__c NotEqualTo ","expected_analysis":["Field: External_Offer_ID__c","Operator: NotEqualTo","Value: "]},{"id":"trigger_edge_6","category":"Flow Trigger Edge Cases","flow":"offer_to_lead","query":"What happens in 'offer_to_lead' if External_Offer_ID__c is NOT equal to ''? Will the flow execute?","context":"Testing trigger condition: External_Offer_ID__c NotEqualTo ","expected_analysis":["Flow will NOT execute","Requires External_Offer_ID__c = "]},{"id":"create_offer_to_lead_record","category":"Record Creation Analysis","flow":"offer_to_lead","query":"In 'offer_to_lead', what Lead record is created by 'offer_to_lead_record'? What fields are set and from where do they get their values?","context":"Object: Lead, Fields: Campaign__c, City, Company, Company_Name__c, Customer_Category__c, Eligibility_for_verif_waiver_or_not__c, Email, FirstName, LastName, Lead_Source__c, Lead_Sub_Status__c, Mobile_No__c, Offer_ID__c, Phone, PostalCode, Product__c, Related_Account__c, Segment_Type__c, State, Status","expected_analysis":["Campaign__c = ${$Record.Campaign__c}","City = ${$Record.Office_City__c}","Company = IDFC","Company_Name__c = IDFC","Customer_Category__c = Individual","Eligibility_for_verif_waiver_or_not__c = ${$Record.Eligibility_for_verif_waiver_or_not__c}","Email = ${$Record.CustomerID__r.Email__c}","FirstName = ${$Record.CustomerID__r.Name}","LastName = Yadav","Lead_Source__c = Internet","Lead_Sub_Status__c = New","Mobile_No__c = ${$Record.Mobile_no__c}","Offer_ID__c = ${$Record.Name}","Phone = ${$Record.Mobile_no__c}","PostalCode = ${$Record.Office_PIN_Code__c}","Product__c = ${$Record.Product__c}","Related_Account__c = ${$Record.CustomerID__c}","Segment_Type__c = ${$Record.Product_Category__c}","State = ${$Record.Office_State__c}","Status = New"]},{"id":"decision_To_Check_offer_Active_to_check_offer_status","category":"Decision Logic Analysis","flow":"Offertoleadconversion","query":"In 'Offertoleadconversion', explain the decision 'To Check offer Active' - specifically when does the 'to check offer status' path execute?","context":"Conditions: offer_Record.Offer_Status__c EqualTo Active","expected_analysis":["offer_Record.Offer_Status__c EqualTo Active"]},{"id":"decision_default_To_Check_offer_Active","category":"Default Path Analysis","flow":"Offertoleadconversion","query":"In 'Offertoleadconversion', what is the default outcome if NONE of the conditions in 'To Check offer Active' are met? What path does the flow take?","context":"Analyzing default connector for decision: To Check offer Active","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"create_offer_to_lead_creation","category":"Record Creation Analysis","flow":"Offertoleadconversion","query":"In 'Offertoleadconversion', what Lead record is created by 'offer to lead creation'? What fields are set and from where do they get their values?","context":"Object: Lead, Fields: Campaign__c, City, Company, Customer_Category__c, Eligibility_for_verif_waiver_or_not__c, Email, FirstName, LastName, Lead_Source__c, Lead_Sub_Status__c, Offer_ID__c, PostalCode, Product__c, Related_Account__c, Segment_Type__c, State, Status, isNew__c","expected_analysis":["Campaign__c = ${offer_Record.Campaign__c}","City = ${offer_Record.Office_City__c}","Company = IDFC","Customer_Category__c = Individual","Eligibility_for_verif_waiver_or_not__c = ${offer_Record.Eligibility_for_verif_waiver_or_not__c}","Email = ${offer_Record.Email__c}","FirstName = ${offer_Record.CustomerID__r.Name}","LastName = Yadav","Lead_Source__c = Internet","Lead_Sub_Status__c = New","Offer_ID__c = ${offer_Record.Name}","PostalCode = ${offer_Record.Office_PIN_Code__c}","Product__c = ${offer_Record.Product__c}","Related_Account__c = ${offer_Record.CustomerID__c}","Segment_Type__c = ${offer_Record.Product__c}","State = ${offer_Record.Office_State__c}","Status = New","isNew__c = True"]},{"id":"screen_Offer_Cannot_Convert_inputs","category":"Screen Input Analysis","flow":"Offertoleadconversion","query":"What user inputs are collected on the 'Offer Cannot Convert' screen in 'Offertoleadconversion'? What types of data are expected?","context":"Screen fields: ['Error_Text']","expected_analysis":["Error_Text: None"]},{"id":"trigger_1","category":"Flow Trigger Conditions","flow":"Lead_Communication_Flow","query":"When does the 'Lead Communication Flow' flow get triggered? Specifically, what condition on Product__c must be met?","context":"Trigger: Product__c EqualTo Credit Card","expected_analysis":["Field: Product__c","Operator: EqualTo","Value: Credit Card"]},{"id":"trigger_edge_1","category":"Flow Trigger Edge Cases","flow":"Lead_Communication_Flow","query":"What happens in 'Lead Communication Flow' if Product__c is NOT equal to 'Credit Card'? Will the flow execute?","context":"Testing trigger condition: Product__c EqualTo Credit Card","expected_analysis":["Flow will NOT execute","Requires Product__c = Credit Card"]},{"id":"trigger_2","category":"Flow Trigger Conditions","flow":"Lead_Communication_Flow","query":"When does the 'Lead Communication Flow' flow get triggered? Specifically, what condition on Email must be met?","context":"Trigger: Email IsNull False","expected_analysis":["Field: Email","Operator: IsNull","Value: False"]},{"id":"trigger_edge_2","category":"Flow Trigger Edge Cases","flow":"Lead_Communication_Flow","query":"What happens in 'Lead Communication Flow' if Email is NOT equal to 'False'? Will the flow execute?","context":"Testing trigger condition: Email IsNull False","expected_analysis":["Flow will NOT execute","Requires Email = False"]},{"id":"decision_To_check_Creation_and_Closure_Lead_Is_Lead_Created","category":"Decision Logic Analysis","flow":"Lead_Communication_Flow","query":"In 'Lead Communication Flow', explain the decision 'To check Creation and Closure Lead' - specifically when does the 'Is Lead Created' path execute?","context":"Conditions: $Record.isNew__c EqualTo True","expected_analysis":["$Record.isNew__c EqualTo True"]},{"id":"decision_default_To_check_Creation_and_Closure_Lead","category":"Default Path Analysis","flow":"Lead_Communication_Flow","query":"In 'Lead Communication Flow', what is the default outcome if NONE of the conditions in 'To check Creation and Closure Lead' are met? What path does the flow take?","context":"Analyzing default connector for decision: To check Creation and Closure Lead","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"decision_To_check_Creation_and_Closure_Lead_Is_Lead_Closed","category":"Decision Logic Analysis","flow":"Lead_Communication_Flow","query":"In 'Lead Communication Flow', explain the decision 'To check Creation and Closure Lead' - specifically when does the 'Is Lead Closed' path execute?","context":"Conditions: $Record.isNew__c EqualTo False","expected_analysis":["$Record.isNew__c EqualTo False"]},{"id":"decision_default_To_check_Creation_and_Closure_Lead","category":"Default Path Analysis","flow":"Lead_Communication_Flow","query":"In 'Lead Communication Flow', what is the default outcome if NONE of the conditions in 'To check Creation and Closure Lead' are met? What path does the flow take?","context":"Analyzing default connector for decision: To check Creation and Closure Lead","expected_analysis":["Default path behavior","Fallback logic"]},{"id":"create_LeadEmailTaskCreation","category":"Record Creation Analysis","flow":"Lead_Communication_Flow","query":"In 'Lead Communication Flow', what Task record is created by 'LeadEmailTaskCreation'? What fields are set and from where do they get their values?","context":"Object: Task, Fields: ActivityDate, CallType, Send_Email__c, Status, Subject, TaskSubtype","expected_analysis":["ActivityDate = ${$Flow.CurrentDate}","CallType = Internal","Send_Email__c = True","Status = Completed","Subject = Email","TaskSubtype = Email"]},{"id":"update_Case_Priority","category":"Record Update Analysis","flow":"Schedule_Flow_Example","query":"In 'Schedule Flow Example', what changes does 'Case Priority' make to the record? Which fields are modified?","context":"Object: Case, Updates: 2 fields","expected_analysis":["Description -> Priority Updated by Schedule Flow","Priority -> High"]}]};
+
+        const categoryClasses = {
+            'Decision Logic Analysis': 'cat-decision',
+            'Null Value Handling': 'cat-null',
+            'Default Path Analysis': 'cat-default',
+            'Record Lookup Analysis': 'cat-lookup',
+            'Empty Result Handling': 'cat-empty',
+            'Record Creation Analysis': 'cat-create',
+            'Record Update Analysis': 'cat-update',
+            'Apex Integration Analysis': 'cat-apex',
+            'Apex Fault Handling': 'cat-apex',
+            'Screen Validation Analysis': 'cat-screen',
+            'Screen Input Analysis': 'cat-screen',
+            'Formula Analysis': 'cat-formula',
+            'Decision Thresholds': 'cat-threshold',
+            'Input Variable Analysis': 'cat-variable',
+            'Output Variable Analysis': 'cat-variable',
+            'Flow Trigger Conditions': 'cat-trigger',
+            'Flow Trigger Edge Cases': 'cat-trigger'
+        };
+
+        // Populate category filter
+        scenarioData.categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            document.getElementById('categoryFilter').appendChild(option);
+        });
+
+        function renderFlows() {
+            const container = document.getElementById('flowsContainer');
+            const searchTerm = document.getElementById('flowSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            let html = '';
+
+            flowData.flows.forEach((flow, index) => {
+                const flowScenarios = scenarioData.scenarios.filter(s => 
+                    s.flow === flow.developer_name || s.flow.toLowerCase() === flow.developer_name.toLowerCase()
+                );
+                if (searchTerm && !flow.flow_name.toLowerCase().includes(searchTerm) && !flow.developer_name.toLowerCase().includes(searchTerm)) return;
+                if (typeFilter && flow.process_type !== typeFilter) return;
+                if (categoryFilter && !flowScenarios.some(s => s.category === categoryFilter)) return;
+
+                const decisionsCount = (flow.decisions || []).length;
+                const lookupsCount = (flow.record_lookups || []).length;
+                const createsCount = (flow.record_creates || []).length;
+                const updatesCount = (flow.record_updates || []).length;
+
+                html += `<div class="flow-accordion" data-flow="${flow.developer_name}">
+                    <div class="flow-header" onclick="toggleFlow(${index})">
+                        <div class="flow-info">
+                            <span class="flow-name"><i class="fas fa-${getFlowIcon(flow)}"></i> ${flow.flow_name}</span>
+                            <span class="flow-type-badge ${flow.process_type}">${getFlowTypeLabel(flow)}</span>
+                        </div>
+                        <div class="flow-stats-mini">
+                            ${decisionsCount > 0 ? `<span class="flow-stat-mini"><i class="fas fa-code-branch"></i> <span>${decisionsCount}</span></span>` : ''}
+                            ${lookupsCount > 0 ? `<span class="flow-stat-mini"><i class="fas fa-search"></i> <span>${lookupsCount}</span></span>` : ''}
+                            ${createsCount > 0 ? `<span class="flow-stat-mini"><i class="fas fa-plus"></i> <span>${createsCount}</span></span>` : ''}
+                            ${updatesCount > 0 ? `<span class="flow-stat-mini"><i class="fas fa-edit"></i> <span>${updatesCount}</span></span>` : ''}
+                            <span class="flow-stat-mini"><i class="fas fa-flask"></i> <span>${flowScenarios.length}</span></span>
+                        </div>
+                        <i class="fas fa-chevron-down flow-toggle"></i>
+                    </div>
+                    <div class="flow-content" id="flowContent${index}">${renderFlowContent(flow, flowScenarios, index)}</div>
+                </div>`;
+            });
+            container.innerHTML = html || '<div class="empty-state"><i class="fas fa-search"></i><p>No flows match your criteria</p></div>';
+        }
+
+        function renderFlowContent(flow, scenarios, flowIndex) {
+            const hasTrigger = flow.trigger_conditions && flow.trigger_conditions.length > 0;
+            const hasDecisions = flow.decisions && flow.decisions.length > 0;
+            const hasLookups = flow.record_lookups && flow.record_lookups.length > 0;
+            const hasCreates = flow.record_creates && flow.record_creates.length > 0;
+            const hasUpdates = flow.record_updates && flow.record_updates.length > 0;
+
+            let html = `<div class="flow-tabs">
+                <button class="flow-tab active" onclick="switchTab(${flowIndex}, 'scenarios')"><i class="fas fa-flask"></i> Scenarios <span class="count">${scenarios.length}</span></button>
+                ${hasTrigger ? `<button class="flow-tab" onclick="switchTab(${flowIndex}, 'trigger')"><i class="fas fa-bolt"></i> Trigger</button>` : ''}
+                ${hasDecisions ? `<button class="flow-tab" onclick="switchTab(${flowIndex}, 'decisions')"><i class="fas fa-code-branch"></i> Decisions <span class="count">${flow.decisions.length}</span></button>` : ''}
+                ${hasLookups ? `<button class="flow-tab" onclick="switchTab(${flowIndex}, 'lookups')"><i class="fas fa-search"></i> Lookups <span class="count">${flow.record_lookups.length}</span></button>` : ''}
+                ${hasCreates ? `<button class="flow-tab" onclick="switchTab(${flowIndex}, 'creates')"><i class="fas fa-plus-circle"></i> Creates <span class="count">${flow.record_creates.length}</span></button>` : ''}
+                ${hasUpdates ? `<button class="flow-tab" onclick="switchTab(${flowIndex}, 'updates')"><i class="fas fa-edit"></i> Updates <span class="count">${flow.record_updates.length}</span></button>` : ''}
+            </div>`;
+            html += `<div class="tab-content active" id="tab${flowIndex}_scenarios">${renderScenarios(scenarios)}</div>`;
+            if (hasTrigger) html += `<div class="tab-content" id="tab${flowIndex}_trigger">${renderTrigger(flow)}</div>`;
+            if (hasDecisions) html += `<div class="tab-content" id="tab${flowIndex}_decisions">${renderDecisions(flow.decisions)}</div>`;
+            if (hasLookups) html += `<div class="tab-content" id="tab${flowIndex}_lookups">${renderRecordOps(flow.record_lookups, 'lookup')}</div>`;
+            if (hasCreates) html += `<div class="tab-content" id="tab${flowIndex}_creates">${renderRecordOps(flow.record_creates, 'create')}</div>`;
+            if (hasUpdates) html += `<div class="tab-content" id="tab${flowIndex}_updates">${renderRecordOps(flow.record_updates, 'update')}</div>`;
+            return html;
+        }
+
+        function renderScenarios(scenarios) {
+            if (!scenarios || scenarios.length === 0) return '<div class="empty-state"><i class="fas fa-flask"></i><p>No scenarios</p></div>';
+            let html = '';
+            scenarios.forEach(scenario => {
+                const categoryClass = categoryClasses[scenario.category] || 'cat-decision';
+                html += `<div class="scenario-card">
+                    <div class="scenario-header" onclick="toggleScenario(this)">
+                        <span class="scenario-category-badge ${categoryClass}">${scenario.category}</span>
+                        <span class="scenario-query">${escapeHtml(scenario.query)}</span>
+                        <i class="fas fa-chevron-down scenario-toggle"></i>
+                    </div>
+                    <div class="scenario-body">
+                        <div class="scenario-context">
+                            <div class="scenario-label"><i class="fas fa-info-circle"></i> Context</div>
+                            <div class="scenario-context-value">${escapeHtml(scenario.context)}</div>
+                        </div>
+                        <div class="scenario-context">
+                            <div class="scenario-label"><i class="fas fa-check-circle"></i> Expected Analysis</div>
+                            <div class="expected-items">${scenario.expected_analysis.map(exp => `<span class="expected-item"><i class="fas fa-check"></i> ${escapeHtml(exp)}</span>`).join('')}</div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            return html;
+        }
+
+        function renderTrigger(flow) {
+            let html = `<div class="trigger-box">
+                <div class="trigger-box-header"><i class="fas fa-bolt"></i> Trigger Configuration ${flow.trigger_object ? `<span class="trigger-object">${flow.trigger_object}</span>` : ''}</div>
+                ${flow.trigger_type ? `<p style="margin-bottom: 0.5rem; color: var(--gray-400);">Type: <strong>${flow.trigger_type}</strong></p>` : ''}`;
+            if (flow.trigger_conditions && flow.trigger_conditions.length > 0) {
+                html += '<div style="margin-top: 0.5rem;"><strong style="font-size: 0.8rem;">Conditions:</strong></div>';
+                flow.trigger_conditions.forEach(cond => {
+                    const value = cond.value === '' ? '(empty)' : (cond.value === true ? 'True' : (cond.value === false ? 'False' : cond.value));
+                    html += `<div class="trigger-condition-item"><span class="trigger-field">${cond.field}</span><span class="trigger-operator">${cond.operator}</span><span class="trigger-value">${value}</span></div>`;
+                });
+            }
+            return html + '</div>';
+        }
+
+        function renderDecisions(decisions) {
+            let html = '';
+            decisions.forEach(decision => {
+                const rulesCount = decision.rules ? decision.rules.length : 0;
+                html += `<div class="decision-card">
+                    <div class="decision-card-header" onclick="toggleDecisionCard(this)">
+                        <span class="decision-title"><i class="fas fa-code-branch"></i> ${decision.label || decision.name}</span>
+                        <span class="decision-rules-count">${rulesCount} rule${rulesCount !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="decision-card-body">${renderDecisionRules(decision.rules)}</div>
+                </div>`;
+            });
+            return html || '<div class="empty-state"><p>No decisions</p></div>';
+        }
+
+        function renderDecisionRules(rules) {
+            if (!rules || rules.length === 0) return '<p style="color: var(--gray-500);">No rules</p>';
+            let html = '';
+            rules.forEach(rule => {
+                html += `<div class="rule-item">
+                    <div class="rule-header"><i class="fas fa-check-circle"></i> ${rule.label || rule.name} ${rule.condition_logic ? `<span class="condition-logic">${rule.condition_logic.toUpperCase()}</span>` : ''}</div>
+                    ${renderConditions(rule.conditions)}
+                </div>`;
+            });
+            return html;
+        }
+
+        function renderConditions(conditions) {
+            if (!conditions || conditions.length === 0) return '';
+            let html = '';
+            conditions.forEach(cond => {
+                const rightValue = cond.right === true ? 'True' : (cond.right === false ? 'False' : (cond.right || '(empty)'));
+                html += `<div class="condition-item"><span class="condition-left">${cond.left}</span><span class="condition-op">${cond.operator}</span><span class="condition-right">${rightValue}</span></div>`;
+            });
+            return html;
+        }
+
+        function renderRecordOps(ops, type) {
+            if (!ops || ops.length === 0) return `<div class="empty-state"><p>No ${type} operations</p></div>`;
+            let html = '';
+            ops.forEach(op => {
+                const icon = type === 'lookup' ? 'fa-search' : (type === 'create' ? 'fa-plus-circle' : 'fa-edit');
+                html += `<div class="record-op-card">
+                    <div class="record-op-header ${type}" onclick="toggleRecordOp(this)">
+                        <span class="record-op-title"><i class="fas ${icon} ${type}"></i> ${op.label || op.name}</span>
+                        <span class="record-op-object ${type}">${op.object}</span>
+                    </div>
+                    <div class="record-op-body">${type === 'lookup' ? renderFilters(op.filters) : renderFields(op.fields)}</div>
+                </div>`;
+            });
+            return html;
+        }
+
+        function renderFilters(filters) {
+            if (!filters || filters.length === 0) return '<p style="color: var(--gray-500);">No filters</p>';
+            let html = '<div class="field-grid">';
+            filters.forEach(f => { html += `<div class="field-row"><span class="field-name">${f.field}</span><span class="field-arrow">${f.operator}</span><span class="field-value">${f.value}</span></div>`; });
+            return html + '</div>';
+        }
+
+        function renderFields(fields) {
+            if (!fields || fields.length === 0) return '<p style="color: var(--gray-500);">No fields</p>';
+            let html = '<div class="field-grid">';
+            fields.forEach(f => { html += `<div class="field-row"><span class="field-name">${f.field}</span><span class="field-arrow">→</span><span class="field-value">${f.value}</span></div>`; });
+            return html + '</div>';
+        }
+
+        function toggleFlow(index) {
+            const header = document.querySelectorAll('.flow-header')[index];
+            const content = document.getElementById(`flowContent${index}`);
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+
+        function switchTab(flowIndex, tabName) {
+            const flowContent = document.getElementById(`flowContent${flowIndex}`);
+            flowContent.querySelectorAll('.flow-tab').forEach(t => t.classList.remove('active'));
+            flowContent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.closest('.flow-tab').classList.add('active');
+            document.getElementById(`tab${flowIndex}_${tabName}`).classList.add('active');
+        }
+
+        function toggleScenario(el) { el.classList.toggle('active'); el.nextElementSibling.classList.toggle('active'); }
+        function toggleDecisionCard(el) { el.nextElementSibling.classList.toggle('active'); }
+        function toggleRecordOp(el) { el.nextElementSibling.classList.toggle('active'); }
+        function filterFlows() { renderFlows(); }
+
+        function getFlowIcon(flow) {
+            if (flow.trigger_object?.endsWith('__e')) return 'satellite-dish';
+            if (flow.process_type === 'Flow') return 'desktop';
+            if (flow.trigger_type === 'Scheduled') return 'clock';
+            if (flow.trigger_conditions?.length > 0) return 'bolt';
+            return 'project-diagram';
+        }
+
+        function getFlowTypeLabel(flow) {
+            if (flow.trigger_object?.endsWith('__e')) return 'Platform Event';
+            if (flow.trigger_type === 'Scheduled') return 'Scheduled';
+            if (flow.process_type === 'Flow') return 'Screen Flow';
+            if (flow.process_type === 'Workflow') return 'Workflow';
+            if (flow.trigger_conditions?.length > 0) return 'Record-Triggered';
+            return flow.process_type;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Render charts
+        const categoryCounts = {};
+        scenarioData.scenarios.forEach(s => { categoryCounts[s.category] = (categoryCounts[s.category] || 0) + 1; });
+        new Chart(document.getElementById('categoriesChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(categoryCounts),
+                datasets: [{ data: Object.values(categoryCounts), backgroundColor: ['#6366f1','#06b6d4','#f59e0b','#fb923c','#ef4444','#10b981','#ec4899','#8b5cf6','#14b8a6','#f97316','#84cc16','#a855f7','#22d3ee','#eab308','#dc2626','#0ea5e9','#d946ef'], borderWidth: 0 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 9 }, boxWidth: 10 } } } }
+        });
+
+        const flowCounts = {};
+        flowData.flows.forEach(flow => {
+            const count = scenarioData.scenarios.filter(s => s.flow === flow.developer_name || s.flow.toLowerCase() === flow.developer_name.toLowerCase()).length;
+            flowCounts[flow.flow_name.substring(0, 18)] = count;
+        });
+        new Chart(document.getElementById('flowsChart'), {
+            type: 'bar',
+            data: { labels: Object.keys(flowCounts), datasets: [{ label: 'Scenarios', data: Object.values(flowCounts), backgroundColor: 'rgba(99, 102, 241, 0.8)', borderRadius: 5 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 8 }, maxRotation: 45 } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } } } }
+        });
+
+        // Initial render
+        renderFlows();
+    </script>
+</body>
+</html>

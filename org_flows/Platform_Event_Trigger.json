@@ -1,0 +1,197 @@
+{
+  "Id": "301J2000000bu4JIAQ",
+  "FullName": "Platform_Event_Trigger",
+  "MasterLabel": "Platform Event Trigger",
+  "Metadata": {
+    "actionCalls": [
+      {
+        "actionName": "chatterPost",
+        "actionType": "chatterPost",
+        "connector": null,
+        "dataTypeMappings": [],
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "flowTransactionModel": "CurrentTransaction",
+        "inputParameters": [
+          {
+            "name": "text",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Record.Message__c",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "name": "subjectNameOrId",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "0F9J2000000TNGFKA4"
+            }
+          }
+        ],
+        "label": "Platform Event Message recieve",
+        "locationX": 540,
+        "locationY": 275,
+        "name": "Platform_Event_Message_recieve",
+        "nameSegment": "chatterPost",
+        "outputConfigParams": [],
+        "outputParameters": [],
+        "processMetadataValues": [],
+        "storeOutputAutomatically": true,
+        "versionSegment": null
+      }
+    ],
+    "apexPluginCalls": [],
+    "apiVersion": 61.0,
+    "assignments": [],
+    "choices": [],
+    "collectionProcessors": [],
+    "constants": [],
+    "customErrors": [],
+    "decisions": [],
+    "description": null,
+    "dynamicChoiceSets": [],
+    "environments": [
+      "Default"
+    ],
+    "exitRules": [],
+    "formulas": [],
+    "interviewLabel": "Platform Event Trigger {!$Flow.CurrentDateTime}",
+    "isAdditionalPermissionRequiredToRun": null,
+    "isOverridable": null,
+    "isTemplate": null,
+    "label": "Platform Event Trigger",
+    "loops": [],
+    "migratedFromWorkflowRuleName": null,
+    "orchestratedStages": [],
+    "overriddenFlow": null,
+    "processMetadataValues": [
+      {
+        "name": "BuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      },
+      {
+        "name": "CanvasMode",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "FREE_FORM_CANVAS"
+        }
+      },
+      {
+        "name": "OriginBuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      }
+    ],
+    "processType": "AutoLaunchedFlow",
+    "recordCreates": [],
+    "recordDeletes": [],
+    "recordLookups": [],
+    "recordRollbacks": [],
+    "recordUpdates": [],
+    "runInMode": null,
+    "screens": [],
+    "sourceTemplate": null,
+    "start": {
+      "connector": {
+        "isGoTo": null,
+        "processMetadataValues": [],
+        "targetReference": "Platform_Event_Message_recieve"
+      },
+      "description": null,
+      "doesRequireRecordChangedToMeetCriteria": null,
+      "elementSubtype": null,
+      "entryType": null,
+      "filterFormula": null,
+      "filterLogic": null,
+      "filters": [],
+      "form": null,
+      "label": null,
+      "locationX": 410,
+      "locationY": 48,
+      "name": null,
+      "object": "Notification_Event__e",
+      "objectContainer": null,
+      "processMetadataValues": [],
+      "recordTriggerType": null,
+      "schedule": null,
+      "scheduledPaths": [],
+      "segment": null,
+      "triggerType": "PlatformEvent"
+    },
+    "startElementReference": null,
+    "status": "Active",
+    "steps": [],
+    "subflows": [],
+    "textTemplates": [],
+    "timeZoneSidKey": null,
+    "transforms": [],
+    "triggerOrder": null,
+    "urls": null,
+    "variables": [],
+    "waits": []
+  },
+  "ProcessType": "AutoLaunchedFlow",
+  "TriggerType": null,
+  "Status": "Active",
+  "ApiVersion": 61.0,
+  "VersionNumber": 1,
+  "Description": null
+}

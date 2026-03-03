@@ -1,0 +1,519 @@
+{
+  "Id": "301J2000000c27qIAA",
+  "FullName": "Lead_Communication_Flow",
+  "MasterLabel": "Lead Communication Flow",
+  "Metadata": {
+    "actionCalls": [
+      {
+        "actionName": "Lead.This_Email_Alert_will_trigger_on_Lead_Closure",
+        "actionType": "emailAlert",
+        "connector": {
+          "isGoTo": null,
+          "processMetadataValues": [],
+          "targetReference": "LeadEmailTaskCreation"
+        },
+        "dataTypeMappings": [],
+        "description": "This email will trigger on Lead Closure",
+        "elementSubtype": null,
+        "faultConnector": null,
+        "flowTransactionModel": "CurrentTransaction",
+        "inputParameters": [
+          {
+            "name": "SObjectRowId",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Record.Id",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          }
+        ],
+        "label": "On Lead Closure",
+        "locationX": 822,
+        "locationY": 483,
+        "name": "On_Lead_Closure",
+        "nameSegment": "Lead.This_Email_Alert_will_trigger_on_Lead_Closure",
+        "outputConfigParams": [],
+        "outputParameters": [],
+        "processMetadataValues": [],
+        "storeOutputAutomatically": null,
+        "versionSegment": null
+      },
+      {
+        "actionName": "Lead.This_Email_Alert_will_trigger_on_Lead_Creation",
+        "actionType": "emailAlert",
+        "connector": null,
+        "dataTypeMappings": [],
+        "description": "This Email will trigger when Lead is Created",
+        "elementSubtype": null,
+        "faultConnector": null,
+        "flowTransactionModel": "CurrentTransaction",
+        "inputParameters": [
+          {
+            "name": "SObjectRowId",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Record.Id",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          }
+        ],
+        "label": "On Lead Creation",
+        "locationX": 283,
+        "locationY": 494,
+        "name": "On_Lead_Creation",
+        "nameSegment": "Lead.This_Email_Alert_will_trigger_on_Lead_Creation",
+        "outputConfigParams": [],
+        "outputParameters": [],
+        "processMetadataValues": [],
+        "storeOutputAutomatically": null,
+        "versionSegment": null
+      },
+      {
+        "actionName": "Lead.This_Email_Alert_will_trigger_on_Lead_Closure",
+        "actionType": "emailAlert",
+        "connector": null,
+        "dataTypeMappings": [],
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "flowTransactionModel": "CurrentTransaction",
+        "inputParameters": [
+          {
+            "name": "SObjectRowId",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Record.Id",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          }
+        ],
+        "label": "This is default email",
+        "locationX": 551,
+        "locationY": 595,
+        "name": "This_is_default_email",
+        "nameSegment": "Lead.This_Email_Alert_will_trigger_on_Lead_Closure",
+        "outputConfigParams": [],
+        "outputParameters": [],
+        "processMetadataValues": [],
+        "storeOutputAutomatically": null,
+        "versionSegment": null
+      }
+    ],
+    "apexPluginCalls": [],
+    "apiVersion": 62.0,
+    "assignments": [],
+    "choices": [],
+    "collectionProcessors": [],
+    "constants": [],
+    "customErrors": [],
+    "decisions": [
+      {
+        "attributes": null,
+        "defaultConnector": {
+          "isGoTo": null,
+          "processMetadataValues": [],
+          "targetReference": "This_is_default_email"
+        },
+        "defaultConnectorLabel": "Default Outcome",
+        "description": null,
+        "elementSubtype": null,
+        "label": "To check Creation and Closure Lead",
+        "locationX": 532,
+        "locationY": 400,
+        "name": "To_check_Creation_and_Closure_Lead",
+        "processMetadataValues": [],
+        "rules": [
+          {
+            "attributes": null,
+            "conditionLogic": "and",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "$Record.isNew__c",
+                "operator": "EqualTo",
+                "processMetadataValues": [],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": true,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "connector": {
+              "isGoTo": null,
+              "processMetadataValues": [],
+              "targetReference": "On_Lead_Creation"
+            },
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": "Is Lead Created",
+            "name": "Is_Lead_Created",
+            "processMetadataValues": []
+          },
+          {
+            "attributes": null,
+            "conditionLogic": "and",
+            "conditions": [
+              {
+                "conditionType": null,
+                "leftValueReference": "$Record.isNew__c",
+                "operator": "EqualTo",
+                "processMetadataValues": [],
+                "rightValue": {
+                  "apexValue": null,
+                  "booleanValue": false,
+                  "dateTimeValue": null,
+                  "dateValue": null,
+                  "elementReference": null,
+                  "formulaDataType": null,
+                  "formulaExpression": null,
+                  "numberValue": null,
+                  "setupReference": null,
+                  "setupReferenceType": null,
+                  "sobjectValue": null,
+                  "stringValue": null
+                }
+              }
+            ],
+            "connector": {
+              "isGoTo": null,
+              "processMetadataValues": [],
+              "targetReference": "On_Lead_Closure"
+            },
+            "description": null,
+            "doesRequireRecordChangedToMeetCriteria": null,
+            "label": "Is Lead Closed",
+            "name": "Is_Lead_Closed",
+            "processMetadataValues": []
+          }
+        ]
+      }
+    ],
+    "description": null,
+    "dynamicChoiceSets": [],
+    "environments": [
+      "Default"
+    ],
+    "exitRules": [],
+    "formulas": [],
+    "interviewLabel": "Lead Communication Flow {!$Flow.CurrentDateTime}",
+    "isAdditionalPermissionRequiredToRun": null,
+    "isOverridable": null,
+    "isTemplate": null,
+    "label": "Lead Communication Flow",
+    "loops": [],
+    "migratedFromWorkflowRuleName": null,
+    "orchestratedStages": [],
+    "overriddenFlow": null,
+    "processMetadataValues": [
+      {
+        "name": "BuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      },
+      {
+        "name": "CanvasMode",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "FREE_FORM_CANVAS"
+        }
+      },
+      {
+        "name": "OriginBuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      }
+    ],
+    "processType": "AutoLaunchedFlow",
+    "recordCreates": [
+      {
+        "assignRecordIdToReference": null,
+        "connector": null,
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "inputAssignments": [
+          {
+            "field": "ActivityDate",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": "$Flow.CurrentDate",
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "CallType",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Internal"
+            }
+          },
+          {
+            "field": "Send_Email__c",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": true,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": null
+            }
+          },
+          {
+            "field": "Status",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Completed"
+            }
+          },
+          {
+            "field": "Subject",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Email"
+            }
+          },
+          {
+            "field": "TaskSubtype",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Email"
+            }
+          }
+        ],
+        "inputReference": null,
+        "label": "LeadEmailTaskCreation",
+        "locationX": 828,
+        "locationY": 693,
+        "name": "LeadEmailTaskCreation",
+        "object": "Task",
+        "processMetadataValues": [],
+        "storeOutputAutomatically": true
+      }
+    ],
+    "recordDeletes": [],
+    "recordLookups": [],
+    "recordRollbacks": [],
+    "recordUpdates": [],
+    "runInMode": null,
+    "screens": [],
+    "sourceTemplate": null,
+    "start": {
+      "connector": {
+        "isGoTo": null,
+        "processMetadataValues": [],
+        "targetReference": "To_check_Creation_and_Closure_Lead"
+      },
+      "description": null,
+      "doesRequireRecordChangedToMeetCriteria": null,
+      "elementSubtype": null,
+      "entryType": null,
+      "filterFormula": null,
+      "filterLogic": "and",
+      "filters": [
+        {
+          "field": "Product__c",
+          "operator": "EqualTo",
+          "processMetadataValues": [],
+          "value": {
+            "apexValue": null,
+            "booleanValue": null,
+            "dateTimeValue": null,
+            "dateValue": null,
+            "elementReference": null,
+            "formulaDataType": null,
+            "formulaExpression": null,
+            "numberValue": null,
+            "setupReference": null,
+            "setupReferenceType": null,
+            "sobjectValue": null,
+            "stringValue": "Credit Card"
+          }
+        },
+        {
+          "field": "Email",
+          "operator": "IsNull",
+          "processMetadataValues": [],
+          "value": {
+            "apexValue": null,
+            "booleanValue": false,
+            "dateTimeValue": null,
+            "dateValue": null,
+            "elementReference": null,
+            "formulaDataType": null,
+            "formulaExpression": null,
+            "numberValue": null,
+            "setupReference": null,
+            "setupReferenceType": null,
+            "sobjectValue": null,
+            "stringValue": null
+          }
+        }
+      ],
+      "form": null,
+      "label": null,
+      "locationX": 410,
+      "locationY": 48,
+      "name": null,
+      "object": "Lead",
+      "objectContainer": null,
+      "processMetadataValues": [],
+      "recordTriggerType": "CreateAndUpdate",
+      "schedule": null,
+      "scheduledPaths": [],
+      "segment": null,
+      "triggerType": "RecordAfterSave"
+    },
+    "startElementReference": null,
+    "status": "Active",
+    "steps": [],
+    "subflows": [],
+    "textTemplates": [],
+    "timeZoneSidKey": null,
+    "transforms": [],
+    "triggerOrder": null,
+    "urls": null,
+    "variables": [],
+    "waits": []
+  },
+  "ProcessType": "AutoLaunchedFlow",
+  "TriggerType": null,
+  "Status": "Active",
+  "ApiVersion": 62.0,
+  "VersionNumber": 14,
+  "Description": null
+}

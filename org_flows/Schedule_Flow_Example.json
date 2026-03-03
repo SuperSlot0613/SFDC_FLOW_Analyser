@@ -1,0 +1,240 @@
+{
+  "Id": "301J2000000bu4EIAQ",
+  "FullName": "Schedule_Flow_Example",
+  "MasterLabel": "Schedule Flow Example",
+  "Metadata": {
+    "actionCalls": [],
+    "apexPluginCalls": [],
+    "apiVersion": 61.0,
+    "assignments": [],
+    "choices": [],
+    "collectionProcessors": [],
+    "constants": [],
+    "customErrors": [],
+    "decisions": [],
+    "description": null,
+    "dynamicChoiceSets": [],
+    "environments": [
+      "Default"
+    ],
+    "exitRules": [],
+    "formulas": [],
+    "interviewLabel": "Schedule Flow Example {!$Flow.CurrentDateTime}",
+    "isAdditionalPermissionRequiredToRun": null,
+    "isOverridable": null,
+    "isTemplate": null,
+    "label": "Schedule Flow Example",
+    "loops": [],
+    "migratedFromWorkflowRuleName": null,
+    "orchestratedStages": [],
+    "overriddenFlow": null,
+    "processMetadataValues": [
+      {
+        "name": "BuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      },
+      {
+        "name": "CanvasMode",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "FREE_FORM_CANVAS"
+        }
+      },
+      {
+        "name": "OriginBuilderType",
+        "value": {
+          "apexValue": null,
+          "booleanValue": null,
+          "dateTimeValue": null,
+          "dateValue": null,
+          "elementReference": null,
+          "formulaDataType": null,
+          "formulaExpression": null,
+          "numberValue": null,
+          "setupReference": null,
+          "setupReferenceType": null,
+          "sobjectValue": null,
+          "stringValue": "LightningFlowBuilder"
+        }
+      }
+    ],
+    "processType": "AutoLaunchedFlow",
+    "recordCreates": [],
+    "recordDeletes": [],
+    "recordLookups": [],
+    "recordRollbacks": [],
+    "recordUpdates": [
+      {
+        "connector": null,
+        "description": null,
+        "elementSubtype": null,
+        "faultConnector": null,
+        "filterLogic": "and",
+        "filters": [
+          {
+            "field": "Status",
+            "operator": "EqualTo",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "New"
+            }
+          },
+          {
+            "field": "Priority",
+            "operator": "NotEqualTo",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "High"
+            }
+          }
+        ],
+        "inputAssignments": [
+          {
+            "field": "Description",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "Priority Updated by Schedule Flow"
+            }
+          },
+          {
+            "field": "Priority",
+            "processMetadataValues": [],
+            "value": {
+              "apexValue": null,
+              "booleanValue": null,
+              "dateTimeValue": null,
+              "dateValue": null,
+              "elementReference": null,
+              "formulaDataType": null,
+              "formulaExpression": null,
+              "numberValue": null,
+              "setupReference": null,
+              "setupReferenceType": null,
+              "sobjectValue": null,
+              "stringValue": "High"
+            }
+          }
+        ],
+        "inputReference": null,
+        "label": "Case Priority",
+        "locationX": 536,
+        "locationY": 379,
+        "name": "Case_Priority",
+        "object": "Case",
+        "processMetadataValues": []
+      }
+    ],
+    "runInMode": null,
+    "screens": [],
+    "sourceTemplate": null,
+    "start": {
+      "connector": {
+        "isGoTo": null,
+        "processMetadataValues": [],
+        "targetReference": "Case_Priority"
+      },
+      "description": null,
+      "doesRequireRecordChangedToMeetCriteria": null,
+      "elementSubtype": null,
+      "entryType": null,
+      "filterFormula": null,
+      "filterLogic": null,
+      "filters": [],
+      "form": null,
+      "label": null,
+      "locationX": 410,
+      "locationY": 48,
+      "name": null,
+      "object": "Case",
+      "objectContainer": null,
+      "processMetadataValues": [],
+      "recordTriggerType": null,
+      "schedule": {
+        "dayOfMonthToRun": null,
+        "daysOfWeekToRun": null,
+        "endDate": null,
+        "endTime": null,
+        "frequency": "Daily",
+        "frequencyNumber": null,
+        "startDate": "2024-08-17",
+        "startTime": "18:30:00.000Z"
+      },
+      "scheduledPaths": [],
+      "segment": null,
+      "triggerType": "Scheduled"
+    },
+    "startElementReference": null,
+    "status": "Active",
+    "steps": [],
+    "subflows": [],
+    "textTemplates": [],
+    "timeZoneSidKey": null,
+    "transforms": [],
+    "triggerOrder": null,
+    "urls": null,
+    "variables": [],
+    "waits": []
+  },
+  "ProcessType": "AutoLaunchedFlow",
+  "TriggerType": null,
+  "Status": "Active",
+  "ApiVersion": 61.0,
+  "VersionNumber": 1,
+  "Description": null
+}
