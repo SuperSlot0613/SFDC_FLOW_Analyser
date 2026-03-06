@@ -16,9 +16,14 @@ Features:
 """
 
 import os
+import sys
 import json
 from datetime import datetime
 from typing import Dict, List, Any
+
+# Add parent directory for imports
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, PROJECT_ROOT)
 
 
 def generate_report(results_data: Dict, output_dir: str = None) -> str:
@@ -33,7 +38,7 @@ def generate_report(results_data: Dict, output_dir: str = None) -> str:
         Path to the generated HTML report
     """
     if output_dir is None:
-        output_dir = os.path.join(os.path.dirname(__file__), 'reports')
+        output_dir = os.path.join(PROJECT_ROOT, 'reports')
     
     os.makedirs(output_dir, exist_ok=True)
     

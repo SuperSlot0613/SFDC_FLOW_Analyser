@@ -24,6 +24,7 @@ Version: 2.0.0
 import json
 import os
 import re
+import sys
 import hashlib
 import pickle
 from datetime import datetime
@@ -34,6 +35,10 @@ from enum import Enum
 from collections import defaultdict
 import math
 
+# Add parent directory and src to path for imports
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 # =============================================================================
 # ENUMS & CONSTANTS

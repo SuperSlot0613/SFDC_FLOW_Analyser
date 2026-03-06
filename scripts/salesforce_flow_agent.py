@@ -23,10 +23,12 @@ from typing import Optional, Dict, List, Any, Union
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent))
+# Add parent directory and src to path for imports
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-# Import internal modules directly (avoiding __init__.py issues)
+# Import internal modules
 from src.config import get_config, Config
 from src.salesforce_metadata_analyzer import FlowAnalyzer
 from src.baseline_manager import BaselineManager

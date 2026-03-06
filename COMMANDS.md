@@ -13,9 +13,39 @@
 - [Generate Reports](#6-generate-reports)
 - [Query Flows with AI](#7-query-flows-with-ai)
 - [Regression Testing](#8-regression-testing)
-- [REST API Server](#9-rest-api-server)
+- [MCP Server](#9-mcp-server)
 - [Utility Commands](#10-utility-commands)
 - [Quick Start](#-quick-start-full-pipeline)
+
+---
+
+## 📁 Project Structure
+
+```
+Flow_AI_Implementation/
+├── cli/                    # CLI tools
+│   ├── fetch_org_flows_cli.py
+│   ├── run_decision_scenarios.py
+│   ├── create_decision_based_scenarios.py
+│   └── generate_scenario_report.py
+├── data/                   # Generated data files
+│   ├── decision_based_scenarios.json
+│   ├── flow_analyses.json
+│   └── flow_model.pkl
+├── scripts/                # High-level scripts
+│   ├── salesforce_flow_agent.py
+│   └── flow_ai_ml_model.py
+├── mcp_server/             # MCP Server for Claude Desktop
+│   └── server.py
+├── src/                    # Core modules
+│   ├── model.py
+│   ├── config.py
+│   ├── llm_integration.py
+│   └── ...
+├── org_flows/              # Salesforce flow metadata
+├── flow_baselines/         # Baseline snapshots
+└── reports/                # Generated reports
+```
 
 ---
 
@@ -23,7 +53,7 @@
 
 ```bash
 # Navigate to project
-cd /Volumes/External_Storage/Flow_AI_Implementation
+cd /Users/saurabhyadav/Desktop/Flow_AI_Implementation
 
 # Check configuration status
 python3 -c "from src.config import get_config; c=get_config(); c.print_status()"
@@ -49,7 +79,7 @@ SF_INSTANCE_URL=https://your-instance.my.salesforce.com
 
 ```bash
 # Fetch all active flows from your org (requires SF CLI authentication)
-python3 fetch_org_flows_cli.py
+python3 cli/fetch_org_flows_cli.py
 
 # Authenticate to Salesforce (if not already)
 sf org login web
@@ -68,15 +98,12 @@ sf org list
 ## 3. Analyze Flows
 
 ```bash
-# Analyze all fetched flows and save to flow_analyses.json
-python3 analyze_flows.py
-
-# Analyze a specific flow
-python3 -c "from src.analyzer import FlowAnalyzer; a=FlowAnalyzer(); print(a.analyze_flow('org_flows/Create_property.json'))"
+# Analyze all fetched flows and save to data/flow_analyses.json
+python3 cli/create_decision_based_scenarios.py
 ```
 
 **Output:**
-- `flow_analyses.json` - Complete analysis of all flows with:
+- `data/flow_analyses.json` - Complete analysis of all flows with:
   - Decisions & rules
   - Record lookups, creates, updates
   - Apex integrations
@@ -90,11 +117,11 @@ python3 -c "from src.analyzer import FlowAnalyzer; a=FlowAnalyzer(); print(a.ana
 
 ```bash
 # Generate test scenarios from analyzed flows
-python3 create_decision_based_scenarios.py
+python3 cli/create_decision_based_scenarios.py
 ```
 
 **Output:**
-- `decision_based_scenarios.json` - 87 scenarios across 17 categories:
+- `data/decision_based_scenarios.json` - 87 scenarios across 17 categories:
   - Decision Logic Analysis
   - Null Value Handling
   - Default Path Analysis
@@ -118,22 +145,22 @@ python3 create_decision_based_scenarios.py
 
 ```bash
 # Run all 87 scenarios (requires API quota)
-python3 run_decision_scenarios.py
+python3 cli/run_decision_scenarios.py
 
 # Run with HTML report generation
-python3 run_decision_scenarios.py --report
+python3 cli/run_decision_scenarios.py --report
 
 # Run limited scenarios (to save API quota)
-python3 run_decision_scenarios.py --limit 5
+python3 cli/run_decision_scenarios.py --limit 5
 
 # Run specific category only
-python3 run_decision_scenarios.py --category "Decision Logic Analysis"
+python3 cli/run_decision_scenarios.py --category "Decision Logic Analysis"
 
 # Run for specific flow only
-python3 run_decision_scenarios.py --flow "Create_property"
+python3 cli/run_decision_scenarios.py --flow "Create_property"
 
 # Combine options
-python3 run_decision_scenarios.py --flow "offer_to_lead" --category "Flow Trigger Conditions" --report
+python3 cli/run_decision_scenarios.py --flow "offer_to_lead" --category "Flow Trigger Conditions" --report
 ```
 
 ### Available Options:
@@ -221,35 +248,50 @@ print(diff)
 
 ---
 
-## 9. REST API Server
+## 9. MCP Server (Model Context Protocol)
 
-### Start Server
+The MCP Server exposes all Flow Analyzer functionality to Claude Desktop and other MCP clients.
+
+### Start MCP Server
 ```bash
-# Start the REST API server (runs on port 5000)
-python3 src/api.py
+# Run the MCP server
+cd /Users/saurabhyadav/Desktop/Flow_AI_Implementation
+source .venv/bin/activate
+python3 -m mcp_server.server
 ```
 
-### API Endpoints
-```bash
-# Health check
-curl http://localhost:5000/api/health
-
-# List all flows
-curl http://localhost:5000/api/flows
-
-# Get specific flow
-curl http://localhost:5000/api/flows/Create_property
-
-# Analyze a flow
-curl -X POST http://localhost:5000/api/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"flow_name":"Create_property"}'
-
-# Query with AI
-curl -X POST http://localhost:5000/api/query \
-  -H "Content-Type: application/json" \
-  -d '{"query":"What does this flow do?", "flow_name":"Create_property"}'
+### Configure Claude Desktop
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "salesforce-flow-analyzer": {
+      "command": "/Users/saurabhyadav/Desktop/Flow_AI_Implementation/.venv/bin/python3",
+      "args": ["-m", "mcp_server.server"],
+      "cwd": "/Users/saurabhyadav/Desktop/Flow_AI_Implementation",
+      "env": {
+        "PYTHONPATH": "/Users/saurabhyadav/Desktop/Flow_AI_Implementation"
+      }
+    }
+  }
+}
 ```
+
+### Available MCP Tools
+- `analyze_flow` - Analyze a Salesforce Flow
+- `list_flows` - List all available flows
+- `query_flow` - Ask questions about a flow
+- `run_scenarios` - Run test scenarios
+- `create_baseline` - Create a baseline snapshot
+- `compare_baseline` - Compare against baseline
+- `run_regression` - Run regression tests
+- `check_best_practices` - Check flow best practices
+- `get_flow_details` - Get detailed flow information
+- `list_scenarios` - List available scenarios
+- `create_scenarios` - Generate test scenarios
+- `generate_report` - Generate HTML report
+- `get_config_status` - Check configuration
+- `search_flows` - Search for flows
 
 ---
 
@@ -261,13 +303,13 @@ curl -X POST http://localhost:5000/api/query \
 ls -la org_flows/
 
 # View flow analyses summary
-python3 -c "import json; d=json.load(open('flow_analyses.json')); print(f'Flows: {len(d[\"flows\"])}')"
+python3 -c "import json; d=json.load(open('data/flow_analyses.json')); print(f'Flows: {len(d[\"flows\"])}')"
 
 # View scenario count
-python3 -c "import json; d=json.load(open('decision_based_scenarios.json')); print(f'Scenarios: {d[\"total_scenarios\"]} across {len(d[\"categories\"])} categories')"
+python3 -c "import json; d=json.load(open('data/decision_based_scenarios.json')); print(f'Scenarios: {d[\"total_scenarios\"]} across {len(d[\"categories\"])} categories')"
 
 # List all categories
-python3 -c "import json; d=json.load(open('decision_based_scenarios.json')); [print(f'  • {c}') for c in d['categories']]"
+python3 -c "import json; d=json.load(open('data/decision_based_scenarios.json')); [print(f'  • {c}') for c in d['categories']]"
 ```
 
 ### Check API Rate Limit
@@ -284,7 +326,7 @@ python3 -c "import json; print(json.dumps(json.load(open('org_flows/Create_prope
 # Count elements in a flow
 python3 -c "
 import json
-f = json.load(open('flow_analyses.json'))
+f = json.load(open('data/flow_analyses.json'))
 for flow in f['flows']:
     print(f\"{flow['flow_name']}: {len(flow.get('decisions',[]))} decisions, {len(flow.get('record_creates',[]))} creates\")
 "
@@ -298,21 +340,18 @@ Run these commands in sequence to execute the complete workflow:
 
 ```bash
 # Navigate to project
-cd /Volumes/External_Storage/Flow_AI_Implementation
+cd /Users/saurabhyadav/Desktop/Flow_AI_Implementation
 
 # Step 1: Fetch flows from Salesforce org
-python3 fetch_org_flows_cli.py
+python3 cli/fetch_org_flows_cli.py
 
-# Step 2: Analyze all fetched flows
-python3 analyze_flows.py
+# Step 2: Generate decision-based test scenarios (also analyzes flows)
+python3 cli/create_decision_based_scenarios.py
 
-# Step 3: Generate decision-based test scenarios
-python3 create_decision_based_scenarios.py
+# Step 3: Run AI scenario tests with report (when API quota available)
+python3 cli/run_decision_scenarios.py --report
 
-# Step 4: Run AI scenario tests with report (when API quota available)
-python3 run_decision_scenarios.py --report
-
-# Step 5: View results
+# Step 4: View results
 open PROJECT_SUMMARY.html
 open reports/scenario_report_*.html
 ```

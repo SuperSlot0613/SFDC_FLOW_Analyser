@@ -12,10 +12,12 @@ import sys
 import json
 from datetime import datetime
 
-# Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+# Add parent directory and src to path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, PROJECT_ROOT)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'src'))
 
-from model import create_model_from_config
+from src.model import create_model_from_config
 
 
 def analyze_flow_decisions(flow_data):
@@ -497,7 +499,7 @@ def main():
 """)
     
     # Load all flows
-    flows_file = os.path.join(os.path.dirname(__file__), 'org_flows', '_all_flows.json')
+    flows_file = os.path.join(PROJECT_ROOT, 'org_flows', '_all_flows.json')
     
     if not os.path.exists(flows_file):
         print("❌ No flows found. Run fetch_org_flows_cli.py first.")
@@ -555,7 +557,7 @@ def main():
         print(f"   • {cat}: {len(scenarios)}")
     
     # Save scenarios
-    scenarios_file = os.path.join(os.path.dirname(__file__), 'decision_based_scenarios.json')
+    scenarios_file = os.path.join(PROJECT_ROOT, 'data', 'decision_based_scenarios.json')
     with open(scenarios_file, 'w') as f:
         json.dump({
             'generated_at': datetime.now().isoformat(),
@@ -565,17 +567,17 @@ def main():
             'scenarios': all_scenarios
         }, f, indent=2)
     
-    print(f"\n✅ Saved {len(all_scenarios)} scenarios to: decision_based_scenarios.json")
+    print(f"\n✅ Saved {len(all_scenarios)} scenarios to: data/decision_based_scenarios.json")
     
     # Save flow analyses
-    analyses_file = os.path.join(os.path.dirname(__file__), 'flow_analyses.json')
+    analyses_file = os.path.join(PROJECT_ROOT, 'data', 'flow_analyses.json')
     with open(analyses_file, 'w') as f:
         json.dump({
             'analyzed_at': datetime.now().isoformat(),
             'flows': flow_analyses
         }, f, indent=2)
     
-    print(f"✅ Saved flow analyses to: flow_analyses.json")
+    print(f"✅ Saved flow analyses to: data/flow_analyses.json")
     
     # Display sample scenarios
     print("\n" + "=" * 80)

@@ -14,11 +14,13 @@ import urllib.request
 import urllib.parse
 from datetime import datetime
 
-# Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+# Add parent directory and src to path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, PROJECT_ROOT)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'src'))
 
-from baseline_manager import BaselineManager
-from model import create_model_from_config
+from src.baseline_manager import BaselineManager
+from src.model import create_model_from_config
 
 
 def get_sf_cli_auth(username=None):
@@ -231,7 +233,7 @@ def main():
     print("  STEP 3: Save Flow Metadata")
     print("=" * 80)
     
-    output_dir = os.path.join(os.path.dirname(__file__), 'org_flows')
+    output_dir = os.path.join(PROJECT_ROOT, 'org_flows')
     os.makedirs(output_dir, exist_ok=True)
     
     detailed_flows = []

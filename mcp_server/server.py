@@ -29,6 +29,7 @@ from typing import Optional, Dict, List, Any
 PROJECT_ROOT_IMPORT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT_IMPORT))
 sys.path.insert(0, str(PROJECT_ROOT_IMPORT / "src"))
+sys.path.insert(0, str(PROJECT_ROOT_IMPORT / "cli"))
 
 # MCP SDK imports
 from mcp.server import Server
@@ -585,7 +586,7 @@ Include:
     
     def _load_scenarios(self) -> Optional[Dict]:
         """Load decision-based scenarios"""
-        scenarios_file = PROJECT_ROOT / "decision_based_scenarios.json"
+        scenarios_file = PROJECT_ROOT / "data" / "decision_based_scenarios.json"
         if scenarios_file.exists():
             with open(scenarios_file, 'r') as f:
                 return json.load(f)
@@ -756,7 +757,7 @@ Include:
             from create_decision_based_scenarios import main as create_scenarios_main
             # This would need to be adapted to work programmatically
             
-            scenarios_file = PROJECT_ROOT / "decision_based_scenarios.json"
+            scenarios_file = PROJECT_ROOT / "data" / "decision_based_scenarios.json"
             if scenarios_file.exists():
                 with open(scenarios_file, 'r') as f:
                     scenarios = json.load(f)

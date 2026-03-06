@@ -13,15 +13,17 @@ import json
 import argparse
 from datetime import datetime
 
-# Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+# Add parent directory and src to path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, PROJECT_ROOT)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, 'src'))
 
-from model import create_model_from_config
+from src.model import create_model_from_config
 
 
 def load_scenarios():
     """Load decision-based scenarios"""
-    scenarios_file = os.path.join(os.path.dirname(__file__), 'decision_based_scenarios.json')
+    scenarios_file = os.path.join(PROJECT_ROOT, 'data', 'decision_based_scenarios.json')
     
     if not os.path.exists(scenarios_file):
         print("❌ No scenarios found. Run create_decision_based_scenarios.py first.")
@@ -34,14 +36,14 @@ def load_scenarios():
 def load_flow(flow_name):
     """Load flow metadata by developer name"""
     # Try exact filename first
-    flow_file = os.path.join(os.path.dirname(__file__), 'org_flows', f'{flow_name}.json')
+    flow_file = os.path.join(PROJECT_ROOT, 'org_flows', f'{flow_name}.json')
     
     if os.path.exists(flow_file):
         with open(flow_file, 'r') as f:
             return json.load(f)
     
     # Try loading from _all_flows.json (always works)
-    all_flows_file = os.path.join(os.path.dirname(__file__), 'org_flows', '_all_flows.json')
+    all_flows_file = os.path.join(PROJECT_ROOT, 'org_flows', '_all_flows.json')
     if os.path.exists(all_flows_file):
         with open(all_flows_file, 'r') as f:
             all_flows = json.load(f)
@@ -62,7 +64,7 @@ def get_all_flows():
     """Get all flows (cached)"""
     global _all_flows_cache
     if _all_flows_cache is None:
-        all_flows_file = os.path.join(os.path.dirname(__file__), 'org_flows', '_all_flows.json')
+        all_flows_file = os.path.join(PROJECT_ROOT, 'org_flows', '_all_flows.json')
         if os.path.exists(all_flows_file):
             with open(all_flows_file, 'r') as f:
                 _all_flows_cache = json.load(f).get('flows', [])
@@ -511,7 +513,8 @@ def main():
     # Save results
     if args.save or args.report:
         results_file = os.path.join(
-            os.path.dirname(__file__), 
+            PROJECT_ROOT, 
+            'data',
             f"decision_scenario_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         )
         
@@ -544,7 +547,7 @@ def main():
                 print(f"      open {report_path}")
                 
                 # Also show path to latest report
-                reports_dir = os.path.join(os.path.dirname(__file__), 'reports')
+                reports_dir = os.path.join(PROJECT_ROOT, 'reports')
                 latest_report = os.path.join(reports_dir, 'latest_report.html')
                 print(f"\n   📌 Latest report always at:")
                 print(f"      {latest_report}")
