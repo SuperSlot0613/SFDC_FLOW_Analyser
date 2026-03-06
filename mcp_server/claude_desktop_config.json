@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "salesforce-flow-analyzer": {
+      "command": "/Users/saurabhyadav/Desktop/Flow_AI_Implementation/.venv/bin/python",
+      "args": [
+        "/Users/saurabhyadav/Desktop/Flow_AI_Implementation/mcp_server/server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "/Users/saurabhyadav/Desktop/Flow_AI_Implementation"
+      }
+    }
+  }
+}

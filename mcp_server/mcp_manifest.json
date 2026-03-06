@@ -1,0 +1,72 @@
+{
+  "name": "salesforce-flow-analyzer-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for Salesforce Flow Analysis, Testing, and Regression Detection",
+  "main": "server.py",
+  "type": "stdio",
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": true
+  },
+  "tools": [
+    {
+      "name": "analyze_flow",
+      "description": "Analyze a Salesforce Flow and get comprehensive insights"
+    },
+    {
+      "name": "list_flows",
+      "description": "List all Salesforce Flows available in the workspace"
+    },
+    {
+      "name": "query_flow",
+      "description": "Ask an AI-powered natural language question about a Salesforce Flow"
+    },
+    {
+      "name": "create_scenarios",
+      "description": "Generate test scenarios from flow decisions, conditions, and logic"
+    },
+    {
+      "name": "run_scenarios",
+      "description": "Execute AI-powered test scenarios against flows"
+    },
+    {
+      "name": "list_scenario_categories",
+      "description": "List all available test scenario categories"
+    },
+    {
+      "name": "create_baseline",
+      "description": "Create a new baseline snapshot from current flow metadata"
+    },
+    {
+      "name": "list_baselines",
+      "description": "List all available baseline snapshots"
+    },
+    {
+      "name": "get_active_baseline",
+      "description": "Get information about the currently active baseline"
+    },
+    {
+      "name": "run_regression",
+      "description": "Compare current flows against baseline and detect changes"
+    },
+    {
+      "name": "generate_report",
+      "description": "Generate an HTML report from the latest test results"
+    },
+    {
+      "name": "get_flow_dependencies",
+      "description": "Get all dependencies for a flow"
+    },
+    {
+      "name": "check_best_practices",
+      "description": "Check a flow against Salesforce best practices"
+    },
+    {
+      "name": "get_config_status",
+      "description": "Check the current configuration status"
+    }
+  ],
+  "author": "Flow AI Implementation",
+  "license": "MIT"
+}
