@@ -15,6 +15,13 @@ openai>=1.0.0
 # For Anthropic Claude integration
 anthropic>=0.18.0
 
+# For LangChain integration (company internal LLMs)
+# Uncomment these if your company uses LangChain
+# langchain>=0.1.0
+# langchain-openai>=0.0.5
+# langchain-core>=0.1.0
+# pydantic>=2.0.0
+
 # For local LLM integration (Ollama)
 # ollama>=0.1.0
 

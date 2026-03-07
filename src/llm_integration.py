@@ -263,32 +263,67 @@ class GitHubModelsClient(BaseLLMClient):
 class CustomLLMClient(BaseLLMClient):
     """
     Custom/Internal LLM API client - For company internal OpenAI-compatible APIs
-    Supports any API that follows the OpenAI chat completions format.
+    Supports:
+    1. LangChain's ChatOpenAI (preferred for company setups)
+    2. OpenAI client with custom base URL
+    3. Raw urllib fallback
     """
     
     def __init__(self, config: LLMConfig):
         super().__init__(config)
         self.client = None
+        self.langchain_client = None
         self.api_key = None
         self.base_url = None
+        self.client_type = None  # 'langchain', 'openai', or 'urllib'
         self._initialize()
     
     def _initialize(self):
-        """Initialize Custom LLM client"""
+        """Initialize Custom LLM client - tries LangChain first, then OpenAI, then urllib"""
         self.api_key = self.config.api_key or os.getenv("CUSTOM_LLM_API_KEY")
         self.base_url = self.config.endpoint or os.getenv("CUSTOM_LLM_BASE_URL")
+        model = self.config.model or os.getenv("CUSTOM_LLM_MODEL", "default")
         
-        if self.api_key and self.base_url:
-            try:
-                # Use OpenAI client with custom base URL
-                from openai import OpenAI
-                self.client = OpenAI(
-                    base_url=self.base_url,
-                    api_key=self.api_key
-                )
-            except ImportError:
-                # Fallback to urllib if openai not installed
-                self.client = "urllib"
+        if not self.api_key or not self.base_url:
+            return
+        
+        # Try LangChain first (company standard)
+        try:
+            from langchain_openai import ChatOpenAI
+            from pydantic import SecretStr
+            
+            self.langchain_client = ChatOpenAI(
+                model_name=model,
+                openai_api_key=SecretStr(self.api_key),
+                openai_api_base=self.base_url,
+                temperature=self.config.temperature,
+                max_tokens=self.config.max_tokens
+            )
+            self.client_type = "langchain"
+            self.client = self.langchain_client
+            return
+        except ImportError:
+            pass  # LangChain not installed, try OpenAI
+        except Exception as e:
+            print(f"Warning: LangChain init failed: {e}, trying OpenAI client")
+        
+        # Try OpenAI client
+        try:
+            from openai import OpenAI
+            self.client = OpenAI(
+                base_url=self.base_url,
+                api_key=self.api_key
+            )
+            self.client_type = "openai"
+            return
+        except ImportError:
+            pass  # OpenAI not installed
+        except Exception as e:
+            print(f"Warning: OpenAI client init failed: {e}, using urllib fallback")
+        
+        # Fallback to urllib
+        self.client = "urllib"
+        self.client_type = "urllib"
     
     def is_available(self) -> bool:
         return self.api_key is not None and self.base_url is not None and self.client is not None
@@ -297,11 +332,27 @@ class CustomLLMClient(BaseLLMClient):
         if not self.is_available():
             raise RuntimeError("Custom LLM not available. Set CUSTOM_LLM_API_KEY and CUSTOM_LLM_BASE_URL in .env file.")
         
-        if self.client == "urllib":
-            # Use urllib as fallback
+        if self.client_type == "langchain":
+            return self._analyze_langchain(prompt)
+        elif self.client_type == "openai":
+            return self._analyze_openai(prompt)
+        else:
             return self._analyze_urllib(prompt)
+    
+    def _analyze_langchain(self, prompt: str) -> str:
+        """Use LangChain ChatOpenAI client"""
+        from langchain_core.messages import SystemMessage, HumanMessage
         
-        # Use OpenAI client with custom endpoint
+        messages = [
+            SystemMessage(content=SALESFORCE_ANALYST_SYSTEM_PROMPT),
+            HumanMessage(content=prompt)
+        ]
+        
+        response = self.langchain_client.invoke(messages)
+        return response.content
+    
+    def _analyze_openai(self, prompt: str) -> str:
+        """Use OpenAI client with custom endpoint"""
         response = self.client.chat.completions.create(
             model=self.config.model or os.getenv("CUSTOM_LLM_MODEL", "default"),
             messages=[
@@ -311,7 +362,6 @@ class CustomLLMClient(BaseLLMClient):
             temperature=self.config.temperature,
             max_tokens=self.config.max_tokens
         )
-        
         return response.choices[0].message.content
     
     def _analyze_urllib(self, prompt: str) -> str:
