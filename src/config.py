@@ -84,7 +84,31 @@ class LLMProvider(Enum):
     ANTHROPIC = "anthropic"
     GITHUB = "github"
     OLLAMA = "ollama"
+    CUSTOM = "custom"  # For company internal/custom OpenAI-compatible APIs
     AUTO = "auto"
+
+
+@dataclass
+class CustomLLMConfig:
+    """Custom/Internal LLM configuration (OpenAI-compatible API)"""
+    api_key: str = ""
+    base_url: str = ""
+    model: str = ""
+    temperature: float = 0.3
+    max_tokens: int = 4000
+    
+    @classmethod
+    def from_env(cls) -> 'CustomLLMConfig':
+        return cls(
+            api_key=os.getenv("CUSTOM_LLM_API_KEY", ""),
+            base_url=os.getenv("CUSTOM_LLM_BASE_URL", ""),
+            model=os.getenv("CUSTOM_LLM_MODEL", ""),
+            temperature=float(os.getenv("LLM_TEMPERATURE", "0.3")),
+            max_tokens=int(os.getenv("LLM_MAX_TOKENS", "4000"))
+        )
+    
+    def is_configured(self) -> bool:
+        return bool(self.api_key and self.base_url and self.model)
 
 
 @dataclass
@@ -263,6 +287,7 @@ class Config:
     azure_openai: AzureOpenAIConfig = field(default_factory=AzureOpenAIConfig)
     anthropic: AnthropicConfig = field(default_factory=AnthropicConfig)
     github: GitHubModelsConfig = field(default_factory=GitHubModelsConfig)
+    custom: CustomLLMConfig = field(default_factory=CustomLLMConfig)
     ollama: OllamaConfig = field(default_factory=OllamaConfig)
     salesforce: SalesforceConfig = field(default_factory=SalesforceConfig)
     app: AppConfig = field(default_factory=AppConfig)
@@ -284,6 +309,7 @@ class Config:
         
         return cls(
             openai=OpenAIConfig.from_env(),
+            custom=CustomLLMConfig.from_env(),
             azure_openai=AzureOpenAIConfig.from_env(),
             anthropic=AnthropicConfig.from_env(),
             github=GitHubModelsConfig.from_env(),
@@ -302,7 +328,10 @@ class Config:
         """
         if self.llm_provider == "auto":
             # Auto-detect based on available credentials
-            if self.github.is_configured():
+            # Priority: Custom > GitHub > OpenAI > Azure > Anthropic
+            if self.custom.is_configured():
+                return LLMProvider.CUSTOM
+            elif self.github.is_configured():
                 return LLMProvider.GITHUB
             elif self.openai.is_configured():
                 return LLMProvider.OPENAI
@@ -318,7 +347,8 @@ class Config:
                 "azure": LLMProvider.AZURE_OPENAI,
                 "anthropic": LLMProvider.ANTHROPIC,
                 "github": LLMProvider.GITHUB,
-                "ollama": LLMProvider.OLLAMA
+                "ollama": LLMProvider.OLLAMA,
+                "custom": LLMProvider.CUSTOM
             }
             return provider_map.get(self.llm_provider.lower())
     
@@ -366,6 +396,15 @@ class Config:
                 "temperature": self.anthropic.temperature,
                 "max_tokens": self.anthropic.max_tokens
             }
+        elif provider == LLMProvider.CUSTOM:
+            return {
+                "provider": "custom",
+                "api_key": self.custom.api_key,
+                "base_url": self.custom.base_url,
+                "model": self.custom.model,
+                "temperature": self.custom.temperature,
+                "max_tokens": self.custom.max_tokens
+            }
         
         return None
     
@@ -377,6 +416,7 @@ class Config:
         
         # LLM Status
         print("\n📦 LLM Providers:")
+        print(f"   Custom/Internal: {'✅ Configured' if self.custom.is_configured() else '❌ Not configured'}")
         print(f"   GitHub Models: {'✅ Configured (FREE with Copilot Pro!)' if self.github.is_configured() else '❌ Not configured'}")
         print(f"   OpenAI:        {'✅ Configured' if self.openai.is_configured() else '❌ Not configured'}")
         print(f"   Azure OpenAI:  {'✅ Configured' if self.azure_openai.is_configured() else '❌ Not configured'}")
@@ -387,6 +427,9 @@ class Config:
             print(f"\n   🎯 Active Provider: {active.value}")
             if active == LLMProvider.GITHUB:
                 print(f"   🤖 Model: {self.github.model}")
+            elif active == LLMProvider.CUSTOM:
+                print(f"   🤖 Model: {self.custom.model}")
+                print(f"   🌐 Base URL: {self.custom.base_url}")
         else:
             print(f"\n   ⚠️  No LLM provider configured (rule-based mode)")
         

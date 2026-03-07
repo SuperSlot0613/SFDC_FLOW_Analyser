@@ -260,6 +260,100 @@ class GitHubModelsClient(BaseLLMClient):
             raise RuntimeError(f"GitHub Models API error: {e.code} - {error_body}")
 
 
+class CustomLLMClient(BaseLLMClient):
+    """
+    Custom/Internal LLM API client - For company internal OpenAI-compatible APIs
+    Supports any API that follows the OpenAI chat completions format.
+    """
+    
+    def __init__(self, config: LLMConfig):
+        super().__init__(config)
+        self.client = None
+        self.api_key = None
+        self.base_url = None
+        self._initialize()
+    
+    def _initialize(self):
+        """Initialize Custom LLM client"""
+        self.api_key = self.config.api_key or os.getenv("CUSTOM_LLM_API_KEY")
+        self.base_url = self.config.endpoint or os.getenv("CUSTOM_LLM_BASE_URL")
+        
+        if self.api_key and self.base_url:
+            try:
+                # Use OpenAI client with custom base URL
+                from openai import OpenAI
+                self.client = OpenAI(
+                    base_url=self.base_url,
+                    api_key=self.api_key
+                )
+            except ImportError:
+                # Fallback to urllib if openai not installed
+                self.client = "urllib"
+    
+    def is_available(self) -> bool:
+        return self.api_key is not None and self.base_url is not None and self.client is not None
+    
+    def analyze(self, prompt: str) -> str:
+        if not self.is_available():
+            raise RuntimeError("Custom LLM not available. Set CUSTOM_LLM_API_KEY and CUSTOM_LLM_BASE_URL in .env file.")
+        
+        if self.client == "urllib":
+            # Use urllib as fallback
+            return self._analyze_urllib(prompt)
+        
+        # Use OpenAI client with custom endpoint
+        response = self.client.chat.completions.create(
+            model=self.config.model or os.getenv("CUSTOM_LLM_MODEL", "default"),
+            messages=[
+                {"role": "system", "content": SALESFORCE_ANALYST_SYSTEM_PROMPT},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=self.config.temperature,
+            max_tokens=self.config.max_tokens
+        )
+        
+        return response.choices[0].message.content
+    
+    def _analyze_urllib(self, prompt: str) -> str:
+        """Fallback using urllib for custom LLM API"""
+        import urllib.request
+        import urllib.error
+        
+        # Ensure base_url ends properly
+        base = self.base_url.rstrip('/')
+        url = f"{base}/chat/completions"
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        
+        data = {
+            "model": self.config.model or os.getenv("CUSTOM_LLM_MODEL", "default"),
+            "messages": [
+                {"role": "system", "content": SALESFORCE_ANALYST_SYSTEM_PROMPT},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": self.config.temperature,
+            "max_tokens": self.config.max_tokens
+        }
+        
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(data).encode('utf-8'),
+            headers=headers,
+            method="POST"
+        )
+        
+        try:
+            with urllib.request.urlopen(req, timeout=120) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                return result['choices'][0]['message']['content']
+        except urllib.error.HTTPError as e:
+            error_body = e.read().decode('utf-8')
+            raise RuntimeError(f"Custom LLM API error: {e.code} - {error_body}")
+
+
 # System prompt for Salesforce analysis
 SALESFORCE_ANALYST_SYSTEM_PROMPT = """You are an expert Salesforce architect and developer with deep knowledge of:
 - Salesforce Flows (Screen Flows, Record-Triggered Flows, Scheduled Flows, Platform Event Flows)
@@ -507,7 +601,15 @@ class LLMMetadataAnalyzer:
     
     def _default_config(self) -> LLMConfig:
         """Create default configuration based on available environment variables"""
-        if os.getenv("AZURE_OPENAI_API_KEY"):
+        # Check for Custom/Internal LLM first (company networks)
+        if os.getenv("CUSTOM_LLM_API_KEY") and os.getenv("CUSTOM_LLM_BASE_URL"):
+            return LLMConfig(
+                provider=LLMProvider.LOCAL,  # Using LOCAL as custom
+                model=os.getenv("CUSTOM_LLM_MODEL", "default"),
+                api_key=os.getenv("CUSTOM_LLM_API_KEY"),
+                endpoint=os.getenv("CUSTOM_LLM_BASE_URL")
+            )
+        elif os.getenv("AZURE_OPENAI_API_KEY"):
             return LLMConfig(
                 provider=LLMProvider.AZURE_OPENAI,
                 model="gpt-4",
@@ -537,6 +639,9 @@ class LLMMetadataAnalyzer:
             return AzureOpenAIClient(self.config)
         elif self.config.provider == LLMProvider.ANTHROPIC:
             return AnthropicClient(self.config)
+        elif self.config.provider == LLMProvider.LOCAL:
+            # LOCAL is used for custom/internal APIs
+            return CustomLLMClient(self.config)
         else:
             raise ValueError(f"Unsupported provider: {self.config.provider}")
     
