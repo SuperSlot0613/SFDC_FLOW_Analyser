@@ -1,34 +1,45 @@
-# Salesforce Metadata AI Analyzer
-# Dependencies for the AI-powered Salesforce metadata analysis tool
+# ============================================================
+# Salesforce Flow AI Analyzer - Dependencies
+# ============================================================
+# AI-powered Salesforce Flow metadata analysis tool with MCP server
+# ============================================================
 
-# Core (Required)
-python-dotenv>=1.0.0  # For loading environment variables from .env
+# =====================
+# CORE DEPENDENCIES
+# =====================
+python-dotenv>=1.0.0          # For loading environment variables from .env
 
-# LLM Providers (Optional - install based on your provider)
+# =====================
+# MCP SERVER (Required)
+# =====================
+mcp>=1.0.0                    # Model Context Protocol SDK for MCP server
 
-# For OpenAI integration
-openai>=1.0.0
+# =====================
+# LLM PROVIDERS
+# =====================
 
-# For Azure OpenAI integration (uses same package as OpenAI)
-# openai>=1.0.0
+# OpenAI / Azure OpenAI / GitHub Models
+openai>=1.0.0                 # For OpenAI, Azure OpenAI, and GitHub Models integration
 
-# For Anthropic Claude integration
-anthropic>=0.18.0
+# Anthropic Claude
+anthropic>=0.18.0             # For Anthropic Claude integration
 
-# For LangChain integration (company internal LLMs)
-# Uncomment these if your company uses LangChain
-# langchain>=0.1.0
-# langchain-openai>=0.0.5
-# langchain-core>=0.1.0
-# pydantic>=2.0.0
+# LangChain (for company internal LLMs using ChatOpenAI)
+langchain-openai>=0.0.5       # LangChain OpenAI integration
+langchain-core>=0.1.0         # LangChain core components
+pydantic>=2.0.0               # Required for LangChain SecretStr
+
+# =====================
+# OPTIONAL DEPENDENCIES
+# =====================
 
 # For local LLM integration (Ollama)
 # ollama>=0.1.0
 
-# API Server (Optional - for REST API)
-# flask>=3.0.0         # For Flask API
-# fastapi>=0.109.0     # For FastAPI
-# uvicorn>=0.27.0      # For running FastAPI
+# API Server (for REST API - optional)
+# flask>=3.0.0                # For Flask API
+# fastapi>=0.109.0            # For FastAPI
+# uvicorn>=0.27.0             # For running FastAPI
 
-# Salesforce Integration (Optional)
-# simple-salesforce>=1.12.0  # For Salesforce REST API
+# Salesforce Integration (optional)
+# simple-salesforce>=1.12.0   # For Salesforce REST API

@@ -258,150 +258,69 @@ class GitHubModelsClient(BaseLLMClient):
         except urllib.error.HTTPError as e:
             error_body = e.read().decode('utf-8')
             raise RuntimeError(f"GitHub Models API error: {e.code} - {error_body}")
+        except urllib.error.URLError as e:
+            raise RuntimeError(
+                f"Connection error to GitHub Models ({self.endpoint}): {e.reason}\n"
+                "This is likely blocked by your company firewall.\n"
+                "Solution: Configure CUSTOM_LLM_* variables in .env to use your company's internal LLM."
+            )
 
 
 class CustomLLMClient(BaseLLMClient):
     """
-    Custom/Internal LLM API client - For company internal OpenAI-compatible APIs
-    Supports:
-    1. LangChain's ChatOpenAI (preferred for company setups)
-    2. OpenAI client with custom base URL
-    3. Raw urllib fallback
+    Custom/Internal LLM API client - Uses company's NLPBridge (llm_helper.py)
+    
+    When LLM_PROVIDER=custom, this directly calls the company's internal LLM
+    via the NLPBridge class which handles authentication and API calls.
     """
     
     def __init__(self, config: LLMConfig):
         super().__init__(config)
-        self.client = None
-        self.langchain_client = None
-        self.api_key = None
-        self.base_url = None
-        self.client_type = None  # 'langchain', 'openai', or 'urllib'
+        self.bridge = None
         self._initialize()
     
     def _initialize(self):
-        """Initialize Custom LLM client - tries LangChain first, then OpenAI, then urllib"""
-        self.api_key = self.config.api_key or os.getenv("CUSTOM_LLM_API_KEY")
-        self.base_url = self.config.endpoint or os.getenv("CUSTOM_LLM_BASE_URL")
-        model = self.config.model or os.getenv("CUSTOM_LLM_MODEL", "default")
-        
-        if not self.api_key or not self.base_url:
-            return
-        
-        # Try LangChain first (company standard)
+        """Initialize using company's NLPBridge"""
         try:
-            from langchain_openai import ChatOpenAI
-            from pydantic import SecretStr
+            # Import the company's LLM helper
+            import sys
+            from pathlib import Path
             
-            self.langchain_client = ChatOpenAI(
-                model_name=model,
-                openai_api_key=SecretStr(self.api_key),
-                openai_api_base=self.base_url,
-                temperature=self.config.temperature,
-                max_tokens=self.config.max_tokens
-            )
-            self.client_type = "langchain"
-            self.client = self.langchain_client
-            return
-        except ImportError:
-            pass  # LangChain not installed, try OpenAI
+            # Add project root to path if needed
+            project_root = Path(__file__).parent.parent
+            if str(project_root) not in sys.path:
+                sys.path.insert(0, str(project_root))
+            
+            from llm_helper import NLPBridge
+            self.bridge = NLPBridge
+            print("✅ Custom LLM initialized using company NLPBridge")
+        except ImportError as e:
+            print(f"⚠️ Could not import llm_helper.py: {e}")
+            self.bridge = None
         except Exception as e:
-            print(f"Warning: LangChain init failed: {e}, trying OpenAI client")
-        
-        # Try OpenAI client
-        try:
-            from openai import OpenAI
-            self.client = OpenAI(
-                base_url=self.base_url,
-                api_key=self.api_key
-            )
-            self.client_type = "openai"
-            return
-        except ImportError:
-            pass  # OpenAI not installed
-        except Exception as e:
-            print(f"Warning: OpenAI client init failed: {e}, using urllib fallback")
-        
-        # Fallback to urllib
-        self.client = "urllib"
-        self.client_type = "urllib"
+            print(f"⚠️ Error initializing NLPBridge: {e}")
+            self.bridge = None
     
     def is_available(self) -> bool:
-        return self.api_key is not None and self.base_url is not None and self.client is not None
+        return self.bridge is not None and self.bridge.enabled
     
     def analyze(self, prompt: str) -> str:
+        """Send prompt to company's internal LLM via NLPBridge"""
         if not self.is_available():
-            raise RuntimeError("Custom LLM not available. Set CUSTOM_LLM_API_KEY and CUSTOM_LLM_BASE_URL in .env file.")
+            raise RuntimeError(
+                "Custom LLM not available. Ensure llm_helper.py exists and NLPBridge.enabled=True"
+            )
         
-        if self.client_type == "langchain":
-            return self._analyze_langchain(prompt)
-        elif self.client_type == "openai":
-            return self._analyze_openai(prompt)
-        else:
-            return self._analyze_urllib(prompt)
-    
-    def _analyze_langchain(self, prompt: str) -> str:
-        """Use LangChain ChatOpenAI client"""
-        from langchain_core.messages import SystemMessage, HumanMessage
-        
-        messages = [
-            SystemMessage(content=SALESFORCE_ANALYST_SYSTEM_PROMPT),
-            HumanMessage(content=prompt)
-        ]
-        
-        response = self.langchain_client.invoke(messages)
-        return response.content
-    
-    def _analyze_openai(self, prompt: str) -> str:
-        """Use OpenAI client with custom endpoint"""
-        response = self.client.chat.completions.create(
-            model=self.config.model or os.getenv("CUSTOM_LLM_MODEL", "default"),
-            messages=[
-                {"role": "system", "content": SALESFORCE_ANALYST_SYSTEM_PROMPT},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=self.config.temperature,
-            max_tokens=self.config.max_tokens
-        )
-        return response.choices[0].message.content
-    
-    def _analyze_urllib(self, prompt: str) -> str:
-        """Fallback using urllib for custom LLM API"""
-        import urllib.request
-        import urllib.error
-        
-        # Ensure base_url ends properly
-        base = self.base_url.rstrip('/')
-        url = f"{base}/chat/completions"
-        
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
-        }
-        
-        data = {
-            "model": self.config.model or os.getenv("CUSTOM_LLM_MODEL", "default"),
-            "messages": [
-                {"role": "system", "content": SALESFORCE_ANALYST_SYSTEM_PROMPT},
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": self.config.temperature,
-            "max_tokens": self.config.max_tokens
-        }
-        
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(data).encode('utf-8'),
-            headers=headers,
-            method="POST"
-        )
+        # Build the full prompt with system context
+        full_prompt = f"""{SALESFORCE_ANALYST_SYSTEM_PROMPT}
+
+{prompt}"""
         
         try:
-            with urllib.request.urlopen(req, timeout=120) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                return result['choices'][0]['message']['content']
-        except urllib.error.HTTPError as e:
-            error_body = e.read().decode('utf-8')
-            raise RuntimeError(f"Custom LLM API error: {e.code} - {error_body}")
+            response = self.bridge.ask_llm(full_prompt)
+            return response
+        except Exception as e:
+            raise RuntimeError(f"Custom LLM API error: {e}")
 
 
 # System prompt for Salesforce analysis
@@ -749,13 +668,28 @@ def create_analyzer(
     Factory function to create an LLM analyzer
     
     Args:
-        provider: 'openai', 'azure', 'anthropic', 'github', or 'auto' (detect from env)
+        provider: 'openai', 'azure', 'anthropic', 'github', 'custom', or 'auto' (detect from env)
         api_key: API key (optional, will use env vars if not provided)
         model: Model name (optional)
-        **kwargs: Additional config options
+        **kwargs: Additional config options (e.g., endpoint for custom/azure)
         
     Returns:
         Configured LLMMetadataAnalyzer instance
+    
+    Usage:
+        # Auto-detect from environment variables
+        analyzer = create_analyzer()
+        
+        # Use specific provider
+        analyzer = create_analyzer(provider='github')
+        
+        # Use custom/internal LLM
+        analyzer = create_analyzer(
+            provider='custom',
+            api_key='your_api_key',
+            model='your-model',
+            endpoint='https://your-llm.internal.com/v1'
+        )
     """
     provider_map = {
         'openai': LLMProvider.OPENAI,
@@ -764,17 +698,32 @@ def create_analyzer(
         'anthropic': LLMProvider.ANTHROPIC,
         'claude': LLMProvider.ANTHROPIC,
         'github': LLMProvider.GITHUB,
-        'github_models': LLMProvider.GITHUB
+        'github_models': LLMProvider.GITHUB,
+        'custom': LLMProvider.LOCAL,  # Custom/internal LLM
+        'local': LLMProvider.LOCAL,
+        'internal': LLMProvider.LOCAL
     }
     
     if provider == "auto" or provider not in provider_map:
         # Auto-detect based on environment
         config = None
     else:
+        # Determine default model based on provider
+        if model:
+            default_model = model
+        elif provider in ['github', 'github_models']:
+            default_model = "gpt-4o"
+        elif provider in ['custom', 'local', 'internal']:
+            default_model = os.getenv("CUSTOM_LLM_MODEL", "default")
+        elif provider in ['anthropic', 'claude']:
+            default_model = "claude-3-sonnet-20240229"
+        else:
+            default_model = "gpt-4"
+        
         config = LLMConfig(
             provider=provider_map[provider],
             api_key=api_key,
-            model=model or ("gpt-4o" if provider in ['github', 'github_models'] else "gpt-4"),
+            model=default_model,
             **kwargs
         )
     

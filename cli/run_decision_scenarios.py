@@ -202,6 +202,7 @@ def validate_response(response, scenario, flow_metadata):
     inner = flow_metadata.get('Metadata', flow_metadata)
     
     # Extract actual trigger filter values from flow metadata
+    # Use lists to store multiple values per field (same field can have multiple conditions)
     start = inner.get('start') or {}
     actual_filters = {}
     for f in start.get('filters', []):
@@ -210,9 +211,12 @@ def validate_response(response, scenario, flow_metadata):
         actual_value = _extract_value(value_obj) if value_obj else None
         operator = f.get('operator', '')
         if field and actual_value is not None:
-            actual_filters[field] = {'value': str(actual_value), 'operator': operator}
+            if field not in actual_filters:
+                actual_filters[field] = []
+            actual_filters[field].append({'value': str(actual_value), 'operator': operator})
     
     # Extract actual decision values from flow metadata
+    # Same field can have multiple conditions with different values
     actual_decisions = {}
     for decision in inner.get('decisions', []):
         for rule in decision.get('rules', []):
@@ -223,15 +227,27 @@ def validate_response(response, scenario, flow_metadata):
                 operator = condition.get('operator', '')
                 if left and right_val is not None:
                     field_name = left.split('.')[-1] if '.' in left else left
-                    actual_decisions[field_name] = {'value': str(right_val), 'operator': operator}
+                    if field_name not in actual_decisions:
+                        actual_decisions[field_name] = []
+                    actual_decisions[field_name].append({'value': str(right_val), 'operator': operator})
     
-    # Combine all actual values
-    all_actual_values = {**actual_filters, **actual_decisions}
+    # Combine all actual values (merge lists for same fields)
+    all_actual_values = {}
+    for field, values in actual_filters.items():
+        if field not in all_actual_values:
+            all_actual_values[field] = []
+        all_actual_values[field].extend(values)
+    for field, values in actual_decisions.items():
+        if field not in all_actual_values:
+            all_actual_values[field] = []
+        all_actual_values[field].extend(values)
     
     # Check if the scenario's expected values match the baseline
     scenario_context = scenario.get('context', '')
-    for field, info in all_actual_values.items():
-        actual_val = info['value']
+    for field, values_list in all_actual_values.items():
+        # Get all actual values for this field
+        actual_vals = [v['value'] for v in values_list]
+        actual_vals_lower = [v.lower() for v in actual_vals]
         
         # Check if the scenario itself has wrong data
         if field.lower() in scenario_context.lower():
@@ -241,7 +257,7 @@ def validate_response(response, scenario, flow_metadata):
                 # Look for the value after the field name
                 for word in part.split():
                     word_clean = word.strip('.,;:!?()[]{}"\' ')
-                    if len(word_clean) > 2 and word_clean.lower() != actual_val.lower():
+                    if len(word_clean) > 2 and word_clean.lower() not in actual_vals_lower:
                         # Check if the scenario has a different value than baseline
                         if word_clean.lower() not in ['equalto', 'notequalto', 'greaterorequal',
                                                        'lessthan', 'contains', 'ischanged',
@@ -249,21 +265,23 @@ def validate_response(response, scenario, flow_metadata):
                                                        'the', 'and', 'for', 'what', 'how',
                                                        'does', 'not', 'flow']:
                             # Verify this word is meant to be the value
-                            if actual_val.lower() != word_clean.lower() and len(word_clean) > 3:
+                            if len(word_clean) > 3:
                                 metadata_mismatches.append({
                                     'field': field,
                                     'scenario_value': word_clean,
-                                    'baseline_value': actual_val,
+                                    'baseline_values': actual_vals,
                                     'source': 'scenario_context'
                                 })
                     break
         
-        # Check if AI response mentions wrong values for this field
+        # Check if AI response mentions at least one of the correct values for this field
         if field.lower() in response_lower:
-            if actual_val.lower() not in response_lower:
+            # Pass if ANY of the actual values is mentioned
+            value_found = any(val.lower() in response_lower for val in actual_vals)
+            if not value_found:
                 metadata_mismatches.append({
                     'field': field,
-                    'expected_value': actual_val,
+                    'expected_values': actual_vals,
                     'source': 'ai_response_missing_correct_value'
                 })
     
@@ -274,14 +292,16 @@ def validate_response(response, scenario, flow_metadata):
         status = 'FAIL'
         for mm in metadata_mismatches:
             if mm['source'] == 'scenario_context':
+                baseline_vals = mm.get('baseline_values', [mm.get('baseline_value', 'Unknown')])
                 issues.append(
                     f"⚠️  SCENARIO DATA MISMATCH: Field '{mm['field']}' has "
-                    f"'{mm['scenario_value']}' in scenario but baseline says '{mm['baseline_value']}'"
+                    f"'{mm['scenario_value']}' in scenario but baseline says '{baseline_vals}'"
                 )
             else:
+                expected_vals = mm.get('expected_values', [mm.get('expected_value', 'Unknown')])
                 issues.append(
-                    f"⚠️  AI RESPONSE ISSUE: Field '{mm['field']}' actual value "
-                    f"'{mm['expected_value']}' not found in AI response"
+                    f"⚠️  AI RESPONSE ISSUE: Field '{mm['field']}' actual value(s) "
+                    f"'{expected_vals}' not found in AI response"
                 )
     elif keyword_match_pct < 50:
         status = 'FAIL'

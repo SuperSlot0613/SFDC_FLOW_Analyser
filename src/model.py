@@ -1397,11 +1397,33 @@ def create_model(llm_provider: str = None, **kwargs) -> SalesforceMetadataAIMode
     Factory function to create the AI model
     
     Args:
-        llm_provider: Optional LLM provider ('openai', 'azure', 'anthropic', 'github')
+        llm_provider: Optional LLM provider:
+            - 'openai': OpenAI API
+            - 'azure': Azure OpenAI
+            - 'anthropic': Anthropic Claude
+            - 'github': GitHub Models (free with Copilot Pro)
+            - 'custom': Custom/Internal LLM (company APIs)
+            - 'local': Same as 'custom'
+            - None: Auto-detect from environment
         **kwargs: Additional arguments for LLM client
+            - api_key: API key for the provider
+            - model: Model name to use
+            - endpoint: Base URL for custom/azure providers
         
     Returns:
         Configured SalesforceMetadataAIModel
+    
+    Examples:
+        # Auto-detect from .env
+        model = create_model()
+        
+        # Use custom/internal LLM
+        model = create_model(
+            llm_provider='custom',
+            api_key='your_key',
+            model='your-model',
+            endpoint='https://your-llm.internal.com/v1'
+        )
     """
     llm_client = None
     
@@ -1424,6 +1446,10 @@ def create_model(llm_provider: str = None, **kwargs) -> SalesforceMetadataAIMode
     # Handle token -> api_key in kwargs as well
     if 'token' in kwargs:
         kwargs['api_key'] = kwargs.pop('token')
+    
+    # Handle base_url -> endpoint mapping for custom LLM
+    if 'base_url' in kwargs:
+        kwargs['endpoint'] = kwargs.pop('base_url')
     
     if llm_provider:
         try:

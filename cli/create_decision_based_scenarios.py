@@ -557,7 +557,10 @@ def main():
         print(f"   • {cat}: {len(scenarios)}")
     
     # Save scenarios
-    scenarios_file = os.path.join(PROJECT_ROOT, 'data', 'decision_based_scenarios.json')
+    data_dir = os.path.join(PROJECT_ROOT, 'data')
+    os.makedirs(data_dir, exist_ok=True)  # Create data directory if it doesn't exist
+    
+    scenarios_file = os.path.join(data_dir, 'decision_based_scenarios.json')
     with open(scenarios_file, 'w') as f:
         json.dump({
             'generated_at': datetime.now().isoformat(),
@@ -570,7 +573,7 @@ def main():
     print(f"\n✅ Saved {len(all_scenarios)} scenarios to: data/decision_based_scenarios.json")
     
     # Save flow analyses
-    analyses_file = os.path.join(PROJECT_ROOT, 'data', 'flow_analyses.json')
+    analyses_file = os.path.join(data_dir, 'flow_analyses.json')
     with open(analyses_file, 'w') as f:
         json.dump({
             'analyzed_at': datetime.now().isoformat(),
