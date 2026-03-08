@@ -72,9 +72,9 @@ Create **one Markdown table row for each delimiter you find** – no more, no le
         custom_client = httpx.Client(verify=False)
 
         # For your internal LLM auth
-        API_KEY = "c3VtaXQuc2luZ2gxMjpOZXdqb2JAMjAwMg=="
-        LLM_MODEL_NAME = "/app/models/Qwen3-14B-FP8"
-        LLM_API_BASE = "https://llm-api.iservebetter.idfcfirstbank.com/qwen3-14b/v1"
+        API_KEY = ""
+        LLM_MODEL_NAME = ""
+        LLM_API_BASE = ""
 
         llm = ChatOpenAI(
             model_name=LLM_MODEL_NAME,
@@ -98,4 +98,5 @@ Create **one Markdown table row for each delimiter you find** – no more, no le
         # ------------------- 4️⃣ Build the prompt -------------------------
         prompt = NLPBridge()._PROMPT_TEMPLATE.replace("<<<RAW_INPUT>>>", raw_input)
         response = NLPBridge.ask_llm(prompt)
+
         return response
